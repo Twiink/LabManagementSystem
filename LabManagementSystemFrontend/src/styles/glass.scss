@@ -1,0 +1,133 @@
+:root {
+  --primary-color: #409eff;
+  --bg-gradient: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%); /* Lighter, pastel gradient for better dark text contrast */
+  --glass-bg: rgba(255, 255, 255, 0.65); /* High opacity for readability */
+  --glass-border: 1px solid rgba(255, 255, 255, 0.6);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+  --text-main: #1f2d3d; /* Very dark blue/grey */
+  --text-regular: #475669;
+  --border-radius-base: 16px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  color: var(--text-main);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.glass-container {
+  background: var(--glass-bg);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--border-radius-base);
+  border: var(--glass-border);
+}
+
+.glass-card {
+  @extend .glass-container;
+  padding: 24px;
+  margin-bottom: 24px;
+  color: var(--text-main);
+}
+
+/* Element Plus Overrides */
+.el-card {
+  @extend .glass-container;
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  border: none !important;
+  color: var(--text-main);
+}
+
+.el-table {
+  background-color: transparent !important;
+  color: var(--text-main) !important;
+  --el-table-text-color: var(--text-main);
+  --el-table-header-text-color: var(--text-main);
+  
+  th.el-table__cell {
+    background-color: rgba(255, 255, 255, 0.4) !important;
+    font-weight: 700;
+    color: #000 !important; /* Pure black for headers */
+  }
+  
+  tr, .el-table__cell {
+    background-color: transparent !important;
+  }
+}
+
+.el-table__row:hover > td {
+  background-color: rgba(64, 158, 255, 0.15) !important;
+}
+
+/* Sidebar and Header - Ensure Dark Text */
+.sidebar-container {
+  background: rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.header-container {
+  background: rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  color: var(--text-main);
+}
+
+/* Menu Text Colors */
+.el-menu {
+  background-color: transparent !important;
+  border-right: none !important;
+}
+
+.el-menu-item, .el-sub-menu__title {
+  color: var(--text-main) !important;
+  font-weight: 600;
+}
+
+.el-menu-item:hover, .el-sub-menu__title:hover {
+  background-color: rgba(64, 158, 255, 0.15) !important;
+  color: var(--primary-color) !important;
+}
+
+.el-menu-item.is-active {
+  color: #fff !important; /* Active state can be white if background is dark/primary */
+  background-color: var(--primary-color) !important;
+  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.4);
+}
+
+/* Inputs */
+.el-input__wrapper {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  box-shadow: 0 0 0 1px #dcdfe6 inset !important;
+}
+
+.el-input__inner {
+  color: var(--text-main) !important;
+  font-weight: 500;
+}
+
+/* Dialogs */
+.el-dialog {
+  border-radius: var(--border-radius-base) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+
+.el-dialog__title {
+  color: var(--text-main) !important;
+  font-weight: bold;
+}
+
+/* Breadcrumb */
+.el-breadcrumb__inner {
+  color: var(--text-regular) !important;
+}
+.el-breadcrumb__inner.is-link {
+  color: var(--text-main) !important;
+  font-weight: 600;
+}

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.labmanagementsystembackend.mapper.LabMapper">
+
+    <resultMap id="LabMap" type="com.example.labmanagementsystembackend.domain.entity.Lab">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="location" property="location" />
+        <result column="capacity" property="capacity" />
+        <result column="open_time_start" property="openTimeStart" />
+        <result column="open_time_end" property="openTimeEnd" />
+        <result column="status" property="status" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+    </resultMap>
+
+    <select id="findById" resultMap="LabMap">
+        SELECT * FROM labs WHERE id = #{id}
+    </select>
+
+    <select id="findLabs" resultMap="LabMap">
+        SELECT * FROM labs
+        <where>
+            <if test="status != null and status != ''">AND status = #{status}</if>
+            <if test="keyword != null and keyword != ''">
+                AND (name LIKE CONCAT('%', #{keyword}, '%') OR location LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+        ORDER BY id DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="countLabs" resultType="long">
+        SELECT COUNT(1) FROM labs
+        <where>
+            <if test="status != null and status != ''">AND status = #{status}</if>
+            <if test="keyword != null and keyword != ''">
+                AND (name LIKE CONCAT('%', #{keyword}, '%') OR location LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertLab" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO labs (name, location, capacity, open_time_start, open_time_end, status)
+        VALUES (#{name}, #{location}, #{capacity}, #{openTimeStart}, #{openTimeEnd}, #{status})
+    </insert>
+
+    <update id="updateLab">
+        UPDATE labs
+        SET name = #{name},
+            location = #{location},
+            capacity = #{capacity},
+            open_time_start = #{openTimeStart},
+            open_time_end = #{openTimeEnd}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE labs SET status = #{status} WHERE id = #{id}
+    </update>
+</mapper>

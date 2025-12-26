@@ -1,0 +1,47 @@
+package com.example.labmanagementsystembackend.common.error;
+
+import com.example.labmanagementsystembackend.common.api.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.UUID;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ApiResponse<Object>> handleBusiness(BusinessException ex, HttpServletRequest request) {
+        ErrorCode code = ex.getErrorCode();
+        return ResponseEntity.ok(ApiResponse.failure(code.getCode(), ex.getMessage(), ex.getData(), requestId(request)));
+    }
+
+    @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class, ConstraintViolationException.class})
+    public ResponseEntity<ApiResponse<Object>> handleValidation(Exception ex, HttpServletRequest request) {
+        return ResponseEntity.ok(ApiResponse.failure(
+                ErrorCode.VALIDATION_FAILED.getCode(),
+                ErrorCode.VALIDATION_FAILED.getMessage(),
+                ex.getMessage(),
+                requestId(request)));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<Object>> handleGeneric(Exception ex, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                ApiResponse.failure(ErrorCode.INTERNAL_ERROR.getCode(), ErrorCode.INTERNAL_ERROR.getMessage(), null, requestId(request))
+        );
+    }
+
+    private String requestId(HttpServletRequest request) {
+        Object value = request.getAttribute("requestId");
+        if (value instanceof String id) {
+            return id;
+        }
+        return UUID.randomUUID().toString();
+    }
+}

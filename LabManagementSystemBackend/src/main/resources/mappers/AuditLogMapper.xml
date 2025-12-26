@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.labmanagementsystembackend.mapper.AuditLogMapper">
+
+    <resultMap id="AuditLogMap" type="com.example.labmanagementsystembackend.domain.entity.AuditLog">
+        <id column="id" property="id" />
+        <result column="actor_id" property="actorId" />
+        <result column="action" property="action" />
+        <result column="target_type" property="targetType" />
+        <result column="target_id" property="targetId" />
+        <result column="detail" property="detail" />
+        <result column="created_at" property="createdAt" />
+    </resultMap>
+
+    <insert id="insertLog" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO audit_logs (actor_id, action, target_type, target_id, detail)
+        VALUES (#{actorId}, #{action}, #{targetType}, #{targetId}, #{detail})
+    </insert>
+
+    <select id="findLogs" resultMap="AuditLogMap">
+        SELECT * FROM audit_logs
+        <where>
+            <if test="actorId != null">AND actor_id = #{actorId}</if>
+            <if test="targetType != null and targetType != ''">AND target_type = #{targetType}</if>
+            <if test="targetId != null">AND target_id = #{targetId}</if>
+            <if test="fromTime != null">AND created_at &gt;= #{fromTime}</if>
+            <if test="toTime != null">AND created_at &lt;= #{toTime}</if>
+        </where>
+        ORDER BY id DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="countLogs" resultType="long">
+        SELECT COUNT(1) FROM audit_logs
+        <where>
+            <if test="actorId != null">AND actor_id = #{actorId}</if>
+            <if test="targetType != null and targetType != ''">AND target_type = #{targetType}</if>
+            <if test="targetId != null">AND target_id = #{targetId}</if>
+            <if test="fromTime != null">AND created_at &gt;= #{fromTime}</if>
+            <if test="toTime != null">AND created_at &lt;= #{toTime}</if>
+        </where>
+    </select>
+</mapper>
