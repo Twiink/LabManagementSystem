@@ -11,6 +11,7 @@
         <result column="open_time_start" property="openTimeStart" />
         <result column="open_time_end" property="openTimeEnd" />
         <result column="status" property="status" />
+        <result column="is_deleted" property="isDeleted" />
         <result column="created_at" property="createdAt" />
         <result column="updated_at" property="updatedAt" />
     </resultMap>
@@ -42,8 +43,8 @@
     </select>
 
     <insert id="insertLab" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO labs (name, location, capacity, open_time_start, open_time_end, status)
-        VALUES (#{name}, #{location}, #{capacity}, #{openTimeStart}, #{openTimeEnd}, #{status})
+        INSERT INTO labs (name, location, capacity, open_time_start, open_time_end, status, is_deleted)
+        VALUES (#{name}, #{location}, #{capacity}, #{openTimeStart}, #{openTimeEnd}, #{status}, #{isDeleted})
     </insert>
 
     <update id="updateLab">

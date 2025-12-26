@@ -24,8 +24,12 @@ public class Approval {
     private String reason;
     @Column(name = "operator_id", nullable = false)
     private Long operatorId;
+    @Column(name = "is_deleted", nullable = false)
+    private Integer isDeleted = 0;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     public Long getId() {
         return id;
@@ -67,11 +71,27 @@ public class Approval {
         this.operatorId = operatorId;
     }
 
+    public Integer getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Integer isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

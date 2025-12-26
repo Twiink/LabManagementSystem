@@ -9,6 +9,7 @@
         <result column="name" property="name" />
         <result column="model" property="model" />
         <result column="status" property="status" />
+        <result column="is_deleted" property="isDeleted" />
         <result column="created_at" property="createdAt" />
         <result column="updated_at" property="updatedAt" />
     </resultMap>
@@ -42,8 +43,8 @@
     </select>
 
     <insert id="insertDevice" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO devices (lab_id, name, model, status)
-        VALUES (#{labId}, #{name}, #{model}, #{status})
+        INSERT INTO devices (lab_id, name, model, status, is_deleted)
+        VALUES (#{labId}, #{name}, #{model}, #{status}, #{isDeleted})
     </insert>
 
     <update id="updateDevice">

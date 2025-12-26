@@ -40,6 +40,8 @@ public class Reservation {
     private LocalDateTime approvedAt;
     @Column(name = "cancel_reason")
     private String cancelReason;
+    @Column(name = "is_deleted", nullable = false)
+    private Integer isDeleted = 0;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
@@ -147,6 +149,14 @@ public class Reservation {
 
     public void setCancelReason(String cancelReason) {
         this.cancelReason = cancelReason;
+    }
+
+    public Integer getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Integer isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
     public LocalDateTime getCreatedAt() {

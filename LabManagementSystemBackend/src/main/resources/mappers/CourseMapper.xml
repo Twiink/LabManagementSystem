@@ -10,6 +10,7 @@
         <result column="student_count" property="studentCount" />
         <result column="term" property="term" />
         <result column="created_by" property="createdBy" />
+        <result column="is_deleted" property="isDeleted" />
         <result column="created_at" property="createdAt" />
         <result column="updated_at" property="updatedAt" />
     </resultMap>
@@ -37,7 +38,7 @@
     </select>
 
     <insert id="insertCourse" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO courses (name, class_name, student_count, term, created_by)
-        VALUES (#{name}, #{className}, #{studentCount}, #{term}, #{createdBy})
+        INSERT INTO courses (name, class_name, student_count, term, created_by, is_deleted)
+        VALUES (#{name}, #{className}, #{studentCount}, #{term}, #{createdBy}, #{isDeleted})
     </insert>
 </mapper>

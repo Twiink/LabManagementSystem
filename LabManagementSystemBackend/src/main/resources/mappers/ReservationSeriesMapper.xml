@@ -9,7 +9,9 @@
         <result column="rule_type" property="ruleType" />
         <result column="rule_value" property="ruleValue" />
         <result column="mode" property="mode" />
+        <result column="is_deleted" property="isDeleted" />
         <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
     </resultMap>
 
     <select id="findById" resultMap="SeriesMap">
@@ -17,7 +19,7 @@
     </select>
 
     <insert id="insertSeries" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO reservation_series (requester_id, rule_type, rule_value, mode)
-        VALUES (#{requesterId}, #{ruleType}, #{ruleValue}, #{mode})
+        INSERT INTO reservation_series (requester_id, rule_type, rule_value, mode, is_deleted)
+        VALUES (#{requesterId}, #{ruleType}, #{ruleValue}, #{mode}, #{isDeleted})
     </insert>
 </mapper>

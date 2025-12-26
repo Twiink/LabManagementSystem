@@ -22,7 +22,7 @@ public class AuthController extends BaseController {
 
     @PostMapping("/login")
     public ApiResponse<LoginResponse> login(@Valid @RequestBody LoginRequest request, HttpServletRequest httpRequest) {
-        LoginResponse response = authService.login(request.getUsername());
+        LoginResponse response = authService.login(request.getUsername(), request.getPassword());
         return success(httpRequest, response);
     }
 }

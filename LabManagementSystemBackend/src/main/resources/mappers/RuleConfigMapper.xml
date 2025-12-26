@@ -8,6 +8,8 @@
         <result column="key_name" property="keyName" />
         <result column="value" property="value" />
         <result column="description" property="description" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="created_at" property="createdAt" />
         <result column="updated_at" property="updatedAt" />
     </resultMap>
 
@@ -20,8 +22,8 @@
     </select>
 
     <insert id="upsertRule" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO rule_configs (key_name, value, description)
-        VALUES (#{keyName}, #{value}, #{description})
-        ON DUPLICATE KEY UPDATE value = VALUES(value), description = VALUES(description)
+        INSERT INTO rule_configs (key_name, value, description, is_deleted)
+        VALUES (#{keyName}, #{value}, #{description}, #{isDeleted})
+        ON DUPLICATE KEY UPDATE value = VALUES(value), description = VALUES(description), is_deleted = VALUES(is_deleted)
     </insert>
 </mapper>

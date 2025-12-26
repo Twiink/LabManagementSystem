@@ -22,6 +22,10 @@ public class RuleConfig {
     private String value;
     @Column(name = "description")
     private String description;
+    @Column(name = "is_deleted", nullable = false)
+    private Integer isDeleted = 0;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
@@ -55,6 +59,22 @@ public class RuleConfig {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Integer getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Integer isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public LocalDateTime getUpdatedAt() {

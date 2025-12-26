@@ -26,6 +26,10 @@ public class User {
     private String role;
     @Column(name = "status", nullable = false)
     private String status;
+    @Column(name = "password_hash")
+    private String passwordHash;
+    @Column(name = "is_deleted", nullable = false)
+    private Integer isDeleted = 0;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
@@ -77,6 +81,22 @@ public class User {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public Integer getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Integer isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
     public LocalDateTime getCreatedAt() {

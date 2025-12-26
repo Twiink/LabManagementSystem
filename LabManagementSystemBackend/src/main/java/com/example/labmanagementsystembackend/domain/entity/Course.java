@@ -26,6 +26,8 @@ public class Course {
     private String term;
     @Column(name = "created_by", nullable = false)
     private Long createdBy;
+    @Column(name = "is_deleted", nullable = false)
+    private Integer isDeleted = 0;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
@@ -77,6 +79,14 @@ public class Course {
 
     public void setCreatedBy(Long createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public Integer getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Integer isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
     public LocalDateTime getCreatedAt() {

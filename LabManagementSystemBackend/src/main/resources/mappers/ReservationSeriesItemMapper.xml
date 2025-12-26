@@ -4,7 +4,7 @@
 <mapper namespace="com.example.labmanagementsystembackend.mapper.ReservationSeriesItemMapper">
 
     <insert id="insertItem" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO reservation_series_items (series_id, reservation_id, status)
-        VALUES (#{seriesId}, #{reservationId}, #{status})
+        INSERT INTO reservation_series_items (series_id, reservation_id, status, is_deleted)
+        VALUES (#{seriesId}, #{reservationId}, #{status}, #{isDeleted})
     </insert>
 </mapper>

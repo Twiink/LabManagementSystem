@@ -17,6 +17,7 @@
         <result column="approved_by" property="approvedBy" />
         <result column="approved_at" property="approvedAt" />
         <result column="cancel_reason" property="cancelReason" />
+        <result column="is_deleted" property="isDeleted" />
         <result column="created_at" property="createdAt" />
         <result column="updated_at" property="updatedAt" />
     </resultMap>
@@ -64,8 +65,8 @@
     </select>
 
     <insert id="insertReservation" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO reservations (requester_id, lab_id, device_id, course_id, start_time, end_time, status, type, priority)
-        VALUES (#{requesterId}, #{labId}, #{deviceId}, #{courseId}, #{startTime}, #{endTime}, #{status}, #{type}, #{priority})
+        INSERT INTO reservations (requester_id, lab_id, device_id, course_id, start_time, end_time, status, type, priority, is_deleted)
+        VALUES (#{requesterId}, #{labId}, #{deviceId}, #{courseId}, #{startTime}, #{endTime}, #{status}, #{type}, #{priority}, #{isDeleted})
     </insert>
 
     <update id="updateReservationTime">

@@ -29,6 +29,8 @@ public class Lab {
     private LocalTime openTimeEnd;
     @Column(name = "status", nullable = false)
     private String status;
+    @Column(name = "is_deleted", nullable = false)
+    private Integer isDeleted = 0;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
@@ -88,6 +90,14 @@ public class Lab {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Integer getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Integer isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
     public LocalDateTime getCreatedAt() {

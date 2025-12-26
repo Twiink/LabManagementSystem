@@ -9,12 +9,14 @@
         <result column="type" property="type" />
         <result column="content" property="content" />
         <result column="status" property="status" />
+        <result column="is_deleted" property="isDeleted" />
         <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
     </resultMap>
 
     <insert id="insertNotification" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO notifications (user_id, type, content, status)
-        VALUES (#{userId}, #{type}, #{content}, #{status})
+        INSERT INTO notifications (user_id, type, content, status, is_deleted)
+        VALUES (#{userId}, #{type}, #{content}, #{status}, #{isDeleted})
     </insert>
 
     <select id="findById" resultMap="NotificationMap">

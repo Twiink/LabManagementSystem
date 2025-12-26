@@ -4,7 +4,7 @@
 <mapper namespace="com.example.labmanagementsystembackend.mapper.ApprovalMapper">
 
     <insert id="insertApproval" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO approvals (reservation_id, action, reason, operator_id)
-        VALUES (#{reservationId}, #{action}, #{reason}, #{operatorId})
+        INSERT INTO approvals (reservation_id, action, reason, operator_id, is_deleted)
+        VALUES (#{reservationId}, #{action}, #{reason}, #{operatorId}, #{isDeleted})
     </insert>
 </mapper>
