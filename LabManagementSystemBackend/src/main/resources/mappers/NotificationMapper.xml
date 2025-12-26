@@ -20,12 +20,14 @@
     </insert>
 
     <select id="findById" resultMap="NotificationMap">
-        SELECT * FROM notifications WHERE id = #{id}
+        SELECT * FROM notifications WHERE id = #{id} AND is_deleted = 0
     </select>
 
     <select id="findNotifications" resultMap="NotificationMap">
         SELECT * FROM notifications
         <where>
+            AND user_id = #{userId}
+            AND is_deleted = 0
             <if test="status != null and status != ''">AND status = #{status}</if>
         </where>
         ORDER BY id DESC
@@ -35,11 +37,13 @@
     <select id="countNotifications" resultType="long">
         SELECT COUNT(1) FROM notifications
         <where>
+            AND user_id = #{userId}
+            AND is_deleted = 0
             <if test="status != null and status != ''">AND status = #{status}</if>
         </where>
     </select>
 
     <update id="markRead">
-        UPDATE notifications SET status = 'READ' WHERE id = #{id}
+        UPDATE notifications SET status = 'READ' WHERE id = #{id} AND is_deleted = 0
     </update>
 </mapper>

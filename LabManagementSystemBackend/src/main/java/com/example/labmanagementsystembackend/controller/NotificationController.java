@@ -2,9 +2,12 @@ package com.example.labmanagementsystembackend.controller;
 
 import com.example.labmanagementsystembackend.common.api.ApiResponse;
 import com.example.labmanagementsystembackend.common.api.PageResponse;
+import com.example.labmanagementsystembackend.common.util.SecurityUtil;
 import com.example.labmanagementsystembackend.dto.response.NotificationResponse;
 import com.example.labmanagementsystembackend.service.NotificationService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,12 +22,14 @@ public class NotificationController extends BaseController {
     }
 
     @GetMapping
-    public ApiResponse<PageResponse<NotificationResponse>> listNotifications(@RequestParam(required = false) String status,
+    public ApiResponse<PageResponse<NotificationResponse>> listNotifications(@AuthenticationPrincipal Jwt jwt,
+                                                                             @RequestParam(required = false) String status,
                                                                             @RequestParam(defaultValue = "1") int page,
                                                                             @RequestParam(defaultValue = "20") int pageSize,
                                                                             HttpServletRequest request) {
-        List<NotificationResponse> items = notificationService.listNotifications(status, page, pageSize);
-        long total = notificationService.countNotifications(status);
+        Long userId = SecurityUtil.getUserId(jwt);
+        List<NotificationResponse> items = notificationService.listNotifications(userId, status, page, pageSize);
+        long total = notificationService.countNotifications(userId, status);
         return success(request, new PageResponse<>(items, page, pageSize, total));
     }
 

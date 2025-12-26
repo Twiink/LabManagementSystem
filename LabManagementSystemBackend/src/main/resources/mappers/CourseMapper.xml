@@ -16,12 +16,13 @@
     </resultMap>
 
     <select id="findById" resultMap="CourseMap">
-        SELECT * FROM courses WHERE id = #{id}
+        SELECT * FROM courses WHERE id = #{id} AND is_deleted = 0
     </select>
 
     <select id="findCourses" resultMap="CourseMap">
         SELECT * FROM courses
         <where>
+            AND is_deleted = 0
             <if test="createdBy != null">AND created_by = #{createdBy}</if>
             <if test="term != null and term != ''">AND term = #{term}</if>
         </where>
@@ -32,6 +33,7 @@
     <select id="countCourses" resultType="long">
         SELECT COUNT(1) FROM courses
         <where>
+            AND is_deleted = 0
             <if test="createdBy != null">AND created_by = #{createdBy}</if>
             <if test="term != null and term != ''">AND term = #{term}</if>
         </where>

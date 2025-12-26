@@ -6,6 +6,7 @@ import com.example.labmanagementsystembackend.dto.response.RuleConfigResponse;
 import com.example.labmanagementsystembackend.service.RuleConfigService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,11 +21,13 @@ public class RuleConfigController extends BaseController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<List<RuleConfigResponse>> listRules(HttpServletRequest request) {
         return success(request, ruleConfigService.listRules());
     }
 
     @PutMapping("/{key}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> updateRule(@PathVariable String key,
                                         @Valid @RequestBody RuleConfigUpdateRequest body,
                                         HttpServletRequest request) {

@@ -5,6 +5,7 @@ import com.example.labmanagementsystembackend.common.api.PageResponse;
 import com.example.labmanagementsystembackend.dto.response.AuditLogResponse;
 import com.example.labmanagementsystembackend.service.AuditLogService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +24,7 @@ public class AuditLogController extends BaseController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<PageResponse<AuditLogResponse>> listLogs(@RequestParam(required = false) Long actorId,
                                                                 @RequestParam(required = false) String targetType,
                                                                 @RequestParam(required = false) Long targetId,

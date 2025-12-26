@@ -26,7 +26,7 @@ public class AuditLog {
     private Long targetId;
     @Column(name = "detail", columnDefinition = "json")
     private String detail;
-    @Column(name = "is_deleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "TINYINT DEFAULT 0")
     private Integer isDeleted = 0;
     @Column(name = "created_at")
     private LocalDateTime createdAt;

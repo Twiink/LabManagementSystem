@@ -15,7 +15,7 @@
     </resultMap>
 
     <select id="findById" resultMap="SeriesMap">
-        SELECT * FROM reservation_series WHERE id = #{id}
+        SELECT * FROM reservation_series WHERE id = #{id} AND is_deleted = 0
     </select>
 
     <insert id="insertSeries" useGeneratedKeys="true" keyProperty="id">

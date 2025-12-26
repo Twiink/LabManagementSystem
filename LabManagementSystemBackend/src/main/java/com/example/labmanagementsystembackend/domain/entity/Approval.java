@@ -24,7 +24,7 @@ public class Approval {
     private String reason;
     @Column(name = "operator_id", nullable = false)
     private Long operatorId;
-    @Column(name = "is_deleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "TINYINT DEFAULT 0")
     private Integer isDeleted = 0;
     @Column(name = "created_at")
     private LocalDateTime createdAt;

@@ -24,7 +24,7 @@ public class Device {
     private String model;
     @Column(name = "status", nullable = false)
     private String status;
-    @Column(name = "is_deleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "TINYINT DEFAULT 0")
     private Integer isDeleted = 0;
     @Column(name = "created_at")
     private LocalDateTime createdAt;

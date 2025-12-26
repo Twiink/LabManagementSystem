@@ -23,6 +23,7 @@
     <select id="findLogs" resultMap="AuditLogMap">
         SELECT * FROM audit_logs
         <where>
+            AND is_deleted = 0
             <if test="actorId != null">AND actor_id = #{actorId}</if>
             <if test="targetType != null and targetType != ''">AND target_type = #{targetType}</if>
             <if test="targetId != null">AND target_id = #{targetId}</if>
@@ -36,6 +37,7 @@
     <select id="countLogs" resultType="long">
         SELECT COUNT(1) FROM audit_logs
         <where>
+            AND is_deleted = 0
             <if test="actorId != null">AND actor_id = #{actorId}</if>
             <if test="targetType != null and targetType != ''">AND target_type = #{targetType}</if>
             <if test="targetId != null">AND target_id = #{targetId}</if>

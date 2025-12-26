@@ -14,11 +14,11 @@
     </resultMap>
 
     <select id="findAll" resultMap="RuleConfigMap">
-        SELECT * FROM rule_configs ORDER BY key_name ASC
+        SELECT * FROM rule_configs WHERE is_deleted = 0 ORDER BY key_name ASC
     </select>
 
     <select id="findByKey" resultMap="RuleConfigMap">
-        SELECT * FROM rule_configs WHERE key_name = #{keyName}
+        SELECT * FROM rule_configs WHERE key_name = #{keyName} AND is_deleted = 0
     </select>
 
     <insert id="upsertRule" useGeneratedKeys="true" keyProperty="id">

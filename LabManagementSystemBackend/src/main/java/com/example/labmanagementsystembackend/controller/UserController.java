@@ -2,11 +2,14 @@ package com.example.labmanagementsystembackend.controller;
 
 import com.example.labmanagementsystembackend.common.api.ApiResponse;
 import com.example.labmanagementsystembackend.common.api.PageResponse;
+import com.example.labmanagementsystembackend.common.util.SecurityUtil;
 import com.example.labmanagementsystembackend.dto.response.UserResponse;
 import com.example.labmanagementsystembackend.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,13 +26,14 @@ public class UserController extends BaseController {
     }
 
     @GetMapping("/me")
-    public ApiResponse<UserResponse> currentUser(@RequestHeader(value = "X-User-Id", required = false) Long userId,
+    public ApiResponse<UserResponse> currentUser(@AuthenticationPrincipal Jwt jwt,
                                                  HttpServletRequest request) {
-        Long resolvedId = userId == null ? 1L : userId;
+        Long resolvedId = SecurityUtil.getUserId(jwt);
         return success(request, userService.getUserById(resolvedId));
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<PageResponse<UserResponse>> listUsers(@RequestParam(required = false) String role,
                                                              @RequestParam(required = false) String status,
                                                              @RequestParam(defaultValue = "1") int page,

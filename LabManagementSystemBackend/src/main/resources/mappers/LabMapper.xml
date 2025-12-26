@@ -17,12 +17,13 @@
     </resultMap>
 
     <select id="findById" resultMap="LabMap">
-        SELECT * FROM labs WHERE id = #{id}
+        SELECT * FROM labs WHERE id = #{id} AND is_deleted = 0
     </select>
 
     <select id="findLabs" resultMap="LabMap">
         SELECT * FROM labs
         <where>
+            AND is_deleted = 0
             <if test="status != null and status != ''">AND status = #{status}</if>
             <if test="keyword != null and keyword != ''">
                 AND (name LIKE CONCAT('%', #{keyword}, '%') OR location LIKE CONCAT('%', #{keyword}, '%'))
@@ -35,6 +36,7 @@
     <select id="countLabs" resultType="long">
         SELECT COUNT(1) FROM labs
         <where>
+            AND is_deleted = 0
             <if test="status != null and status != ''">AND status = #{status}</if>
             <if test="keyword != null and keyword != ''">
                 AND (name LIKE CONCAT('%', #{keyword}, '%') OR location LIKE CONCAT('%', #{keyword}, '%'))

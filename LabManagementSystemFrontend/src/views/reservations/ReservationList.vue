@@ -20,30 +20,55 @@
     </div>
 
     <div class="glass-card">
-      <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="title" label="事项" />
-        <el-table-column prop="type" label="类型" width="100">
-           <template #default="scope">
-            <el-tag effect="plain" round>{{ scope.row.type }}</el-tag>
+      <div class="view-switch">
+        <el-radio-group v-model="viewMode">
+          <el-radio-button label="list">列表视图</el-radio-button>
+          <el-radio-button label="calendar">日历视图</el-radio-button>
+        </el-radio-group>
+      </div>
+
+      <div v-if="viewMode === 'list'">
+        <el-table :data="tableData" style="width: 100%">
+          <el-table-column prop="title" label="事项" />
+          <el-table-column prop="type" label="类型" width="100">
+            <template #default="scope">
+              <el-tag effect="plain" round>{{ scope.row.type }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="startTime" label="开始时间" />
+          <el-table-column prop="endTime" label="结束时间" />
+          <el-table-column prop="status" label="状态" width="120">
+            <template #default="scope">
+              <el-tag :type="getStatusType(scope.row.status)" effect="dark" round>{{ scope.row.status }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="250">
+            <template #default="scope">
+              <el-button v-if="scope.row.status === 'PENDING'" link type="success" size="small" @click="handleApprove(scope.row)">通过</el-button>
+              <el-button v-if="scope.row.status === 'PENDING'" link type="danger" size="small" @click="handleReject(scope.row)">驳回</el-button>
+              <el-button link type="primary" size="small" @click="handleDetail(scope.row)">详情</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="pagination-container">
+          <el-pagination background layout="prev, pager, next" :total="100" />
+        </div>
+      </div>
+
+      <div v-else class="calendar-wrapper">
+        <el-calendar v-model="calendarDate">
+          <template #date-cell="{ data }">
+            <div class="calendar-cell">
+              <div class="calendar-date">{{ data.day.split('-').slice(2).join('') }}</div>
+              <div class="calendar-events">
+                <div v-for="item in reservationsByDate[data.day]" :key="item.id" class="calendar-event">
+                  <span class="event-title">{{ item.title }}</span>
+                  <span class="event-time">{{ formatTime(item.startTime) }}</span>
+                </div>
+              </div>
+            </div>
           </template>
-        </el-table-column>
-        <el-table-column prop="startTime" label="开始时间" />
-        <el-table-column prop="endTime" label="结束时间" />
-        <el-table-column prop="status" label="状态" width="120">
-          <template #default="scope">
-            <el-tag :type="getStatusType(scope.row.status)" effect="dark" round>{{ scope.row.status }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="250">
-          <template #default="scope">
-            <el-button v-if="scope.row.status === 'PENDING'" link type="success" size="small" @click="handleApprove(scope.row)">通过</el-button>
-            <el-button v-if="scope.row.status === 'PENDING'" link type="danger" size="small" @click="handleReject(scope.row)">驳回</el-button>
-            <el-button link type="primary" size="small" @click="handleDetail(scope.row)">详情</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="pagination-container">
-        <el-pagination background layout="prev, pager, next" :total="100" />
+        </el-calendar>
       </div>
     </div>
 
@@ -101,6 +126,8 @@ const statusFilter = ref('')
 const tableData = ref([...mockReservations])
 
 const dialogVisible = ref(false)
+const viewMode = ref<'list' | 'calendar'>('list')
+const calendarDate = ref(new Date())
 const resourceType = ref('LAB')
 const timeRange = ref([])
 
@@ -114,6 +141,21 @@ const form = reactive({
 
 const resourceOptions = computed(() => {
   return resourceType.value === 'LAB' ? mockLabs : mockDevices
+})
+
+const reservationsByDate = computed(() => {
+  const map: Record<string, any[]> = {}
+  tableData.value.forEach(item => {
+    const dateKey = item.startTime?.split('T')[0] || item.startTime?.split(' ')[0]
+    if (!dateKey) {
+      return
+    }
+    if (!map[dateKey]) {
+      map[dateKey] = []
+    }
+    map[dateKey].push(item)
+  })
+  return map
 })
 
 const handleSearch = () => {
@@ -186,6 +228,16 @@ const getStatusType = (status: string) => {
   }
   return map[status] || 'info'
 }
+
+const formatTime = (value: string) => {
+  if (!value) {
+    return ''
+  }
+  if (value.includes('T')) {
+    return value.split('T')[1]?.replace('Z', '').slice(0, 5)
+  }
+  return value.split(' ')[1]?.slice(0, 5) || ''
+}
 </script>
 
 <style scoped lang="scss">
@@ -199,5 +251,52 @@ const getStatusType = (status: string) => {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
+}
+
+.view-switch {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.calendar-wrapper {
+  padding: 10px 0;
+}
+
+.calendar-cell {
+  min-height: 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.calendar-date {
+  font-weight: 600;
+  color: #1f2d3d;
+}
+
+.calendar-events {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.calendar-event {
+  font-size: 12px;
+  background: rgba(48, 79, 254, 0.08);
+  border-radius: 6px;
+  padding: 2px 6px;
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.event-title {
+  color: #1f2d3d;
+  font-weight: 500;
+}
+
+.event-time {
+  color: #3f51b5;
 }
 </style>

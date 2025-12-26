@@ -2,14 +2,17 @@ package com.example.labmanagementsystembackend.controller;
 
 import com.example.labmanagementsystembackend.common.api.ApiResponse;
 import com.example.labmanagementsystembackend.common.api.PageResponse;
+import com.example.labmanagementsystembackend.common.util.SecurityUtil;
 import com.example.labmanagementsystembackend.dto.request.*;
 import com.example.labmanagementsystembackend.dto.response.ReservationCreateResponse;
 import com.example.labmanagementsystembackend.dto.response.ReservationResponse;
 import com.example.labmanagementsystembackend.dto.response.ReservationSeriesResponse;
 import com.example.labmanagementsystembackend.service.ReservationService;
-import com.example.labmanagementsystembackend.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.OffsetDateTime;
@@ -20,11 +23,9 @@ import java.util.List;
 @RequestMapping("/api/reservations")
 public class ReservationController extends BaseController {
     private final ReservationService reservationService;
-    private final UserService userService;
 
-    public ReservationController(ReservationService reservationService, UserService userService) {
+    public ReservationController(ReservationService reservationService) {
         this.reservationService = reservationService;
-        this.userService = userService;
     }
 
     @GetMapping
@@ -46,26 +47,29 @@ public class ReservationController extends BaseController {
     }
 
     @PostMapping
-    public ApiResponse<ReservationCreateResponse> createReservation(@RequestHeader(value = "X-User-Id", required = false) Long userId,
+    @PreAuthorize("hasAnyRole('TEACHER','STUDENT','ADMIN')")
+    public ApiResponse<ReservationCreateResponse> createReservation(@AuthenticationPrincipal Jwt jwt,
                                                                     @Valid @RequestBody ReservationCreateRequest body,
                                                                     HttpServletRequest request) {
-        Long requesterId = userId == null ? 1L : userId;
+        Long requesterId = SecurityUtil.getUserId(jwt);
         return success(request, reservationService.createReservation(requesterId, body));
     }
 
     @PostMapping("/series")
-    public ApiResponse<ReservationSeriesResponse> createSeries(@RequestHeader(value = "X-User-Id", required = false) Long userId,
+    @PreAuthorize("hasAnyRole('TEACHER','ADMIN')")
+    public ApiResponse<ReservationSeriesResponse> createSeries(@AuthenticationPrincipal Jwt jwt,
                                                                @Valid @RequestBody ReservationSeriesRequest body,
                                                                HttpServletRequest request) {
-        Long requesterId = userId == null ? 1L : userId;
+        Long requesterId = SecurityUtil.getUserId(jwt);
         return success(request, reservationService.createSeries(requesterId, body));
     }
 
     @PostMapping("/course")
-    public ApiResponse<ReservationCreateResponse> createCourse(@RequestHeader(value = "X-User-Id", required = false) Long userId,
+    @PreAuthorize("hasAnyRole('TEACHER','ADMIN')")
+    public ApiResponse<ReservationCreateResponse> createCourse(@AuthenticationPrincipal Jwt jwt,
                                                                @Valid @RequestBody CourseReservationRequest body,
                                                                HttpServletRequest request) {
-        Long requesterId = userId == null ? 1L : userId;
+        Long requesterId = SecurityUtil.getUserId(jwt);
         return success(request, reservationService.createCourseReservation(requesterId, body));
     }
 
@@ -75,69 +79,72 @@ public class ReservationController extends BaseController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<ReservationResponse> updateReservation(@RequestHeader(value = "X-User-Id", required = false) Long userId,
+    public ApiResponse<ReservationResponse> updateReservation(@AuthenticationPrincipal Jwt jwt,
                                                               @PathVariable Long id,
                                                               @Valid @RequestBody ReservationUpdateRequest body,
                                                               HttpServletRequest request) {
-        Long requesterId = userId == null ? 1L : userId;
+        Long requesterId = SecurityUtil.getUserId(jwt);
         return success(request, reservationService.updateReservation(requesterId, id, body));
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> cancelReservation(@RequestHeader(value = "X-User-Id", required = false) Long userId,
+    public ApiResponse<Void> cancelReservation(@AuthenticationPrincipal Jwt jwt,
                                                @PathVariable Long id,
                                                @RequestParam(required = false) String reason,
                                                HttpServletRequest request) {
-        Long requesterId = userId == null ? 1L : userId;
-        boolean isAdmin = "ADMIN".equals(userService.getUserEntity(requesterId).getRole());
+        Long requesterId = SecurityUtil.getUserId(jwt);
+        boolean isAdmin = "ADMIN".equals(SecurityUtil.getRole(jwt));
         reservationService.cancelReservation(requesterId, id, reason, isAdmin);
         return success(request, null);
     }
 
     @PostMapping("/{id}/approve")
-    public ApiResponse<Void> approve(@RequestHeader(value = "X-User-Id", required = false) Long userId,
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<Void> approve(@AuthenticationPrincipal Jwt jwt,
                                      @PathVariable Long id,
                                      @Valid @RequestBody ReservationApprovalRequest body,
                                      HttpServletRequest request) {
-        Long operatorId = userId == null ? 1L : userId;
+        Long operatorId = SecurityUtil.getUserId(jwt);
         reservationService.approve(operatorId, id, body.getReason());
         return success(request, null);
     }
 
     @PostMapping("/{id}/reject")
-    public ApiResponse<Void> reject(@RequestHeader(value = "X-User-Id", required = false) Long userId,
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<Void> reject(@AuthenticationPrincipal Jwt jwt,
                                     @PathVariable Long id,
                                     @Valid @RequestBody ReservationApprovalRequest body,
                                     HttpServletRequest request) {
-        Long operatorId = userId == null ? 1L : userId;
+        Long operatorId = SecurityUtil.getUserId(jwt);
         reservationService.reject(operatorId, id, body.getReason());
         return success(request, null);
     }
 
     @PostMapping("/{id}/override")
-    public ApiResponse<Void> override(@RequestHeader(value = "X-User-Id", required = false) Long userId,
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<Void> override(@AuthenticationPrincipal Jwt jwt,
                                       @PathVariable Long id,
                                       @Valid @RequestBody ReservationOverrideRequest body,
                                       HttpServletRequest request) {
-        Long operatorId = userId == null ? 1L : userId;
+        Long operatorId = SecurityUtil.getUserId(jwt);
         reservationService.override(operatorId, id, body.getReason(), body.getAction());
         return success(request, null);
     }
 
     @PostMapping("/{id}/checkin")
-    public ApiResponse<Void> checkin(@RequestHeader(value = "X-User-Id", required = false) Long userId,
+    public ApiResponse<Void> checkin(@AuthenticationPrincipal Jwt jwt,
                                      @PathVariable Long id,
                                      HttpServletRequest request) {
-        Long operatorId = userId == null ? 1L : userId;
+        Long operatorId = SecurityUtil.getUserId(jwt);
         reservationService.checkin(operatorId, id);
         return success(request, null);
     }
 
     @PostMapping("/{id}/checkout")
-    public ApiResponse<Void> checkout(@RequestHeader(value = "X-User-Id", required = false) Long userId,
+    public ApiResponse<Void> checkout(@AuthenticationPrincipal Jwt jwt,
                                       @PathVariable Long id,
                                       HttpServletRequest request) {
-        Long operatorId = userId == null ? 1L : userId;
+        Long operatorId = SecurityUtil.getUserId(jwt);
         reservationService.checkout(operatorId, id);
         return success(request, null);
     }

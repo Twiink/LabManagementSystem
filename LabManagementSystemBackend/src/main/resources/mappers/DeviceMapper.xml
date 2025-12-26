@@ -15,12 +15,13 @@
     </resultMap>
 
     <select id="findById" resultMap="DeviceMap">
-        SELECT * FROM devices WHERE id = #{id}
+        SELECT * FROM devices WHERE id = #{id} AND is_deleted = 0
     </select>
 
     <select id="findDevices" resultMap="DeviceMap">
         SELECT * FROM devices
         <where>
+            AND is_deleted = 0
             <if test="labId != null">AND lab_id = #{labId}</if>
             <if test="status != null and status != ''">AND status = #{status}</if>
             <if test="keyword != null and keyword != ''">
@@ -34,6 +35,7 @@
     <select id="countDevices" resultType="long">
         SELECT COUNT(1) FROM devices
         <where>
+            AND is_deleted = 0
             <if test="labId != null">AND lab_id = #{labId}</if>
             <if test="status != null and status != ''">AND status = #{status}</if>
             <if test="keyword != null and keyword != ''">

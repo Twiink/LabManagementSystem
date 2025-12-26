@@ -29,17 +29,17 @@ public class NotificationService {
         notificationMapper.insertNotification(notification);
     }
 
-    public List<NotificationResponse> listNotifications(String status, int page, int pageSize) {
+    public List<NotificationResponse> listNotifications(Long userId, String status, int page, int pageSize) {
         int safePage = PageUtil.normalizePage(page);
         int safeSize = PageUtil.normalizePageSize(pageSize);
-        return notificationMapper.findNotifications(status, PageUtil.offset(safePage, safeSize), safeSize)
+        return notificationMapper.findNotifications(userId, status, PageUtil.offset(safePage, safeSize), safeSize)
                 .stream()
                 .map(NotificationService::toResponse)
                 .collect(Collectors.toList());
     }
 
-    public long countNotifications(String status) {
-        return notificationMapper.countNotifications(status);
+    public long countNotifications(Long userId, String status) {
+        return notificationMapper.countNotifications(userId, status);
     }
 
     public void markRead(Long id) {

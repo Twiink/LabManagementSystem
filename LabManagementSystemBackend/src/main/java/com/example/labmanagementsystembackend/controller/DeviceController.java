@@ -9,6 +9,7 @@ import com.example.labmanagementsystembackend.dto.response.DeviceResponse;
 import com.example.labmanagementsystembackend.service.DeviceService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,12 +36,14 @@ public class DeviceController extends BaseController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<DeviceResponse> createDevice(@Valid @RequestBody DeviceCreateRequest body,
                                                     HttpServletRequest request) {
         return success(request, deviceService.createDevice(body));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<DeviceResponse> updateDevice(@PathVariable Long id,
                                                     @Valid @RequestBody DeviceUpdateRequest body,
                                                     HttpServletRequest request) {
@@ -48,6 +51,7 @@ public class DeviceController extends BaseController {
     }
 
     @PatchMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> updateStatus(@PathVariable Long id,
                                           @Valid @RequestBody DeviceStatusUpdateRequest body,
                                           HttpServletRequest request) {

@@ -12,11 +12,12 @@ public interface NotificationMapper {
 
     Notification findById(@Param("id") Long id);
 
-    List<Notification> findNotifications(@Param("status") String status,
+    List<Notification> findNotifications(@Param("userId") Long userId,
+                                         @Param("status") String status,
                                          @Param("offset") int offset,
                                          @Param("pageSize") int pageSize);
 
-    long countNotifications(@Param("status") String status);
+    long countNotifications(@Param("userId") Long userId, @Param("status") String status);
 
     int markRead(@Param("id") Long id);
 }

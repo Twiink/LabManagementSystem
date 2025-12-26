@@ -23,12 +23,13 @@
     </resultMap>
 
     <select id="findById" resultMap="ReservationMap">
-        SELECT * FROM reservations WHERE id = #{id}
+        SELECT * FROM reservations WHERE id = #{id} AND is_deleted = 0
     </select>
 
     <select id="findReservations" resultMap="ReservationMap">
         SELECT * FROM reservations
         <where>
+            AND is_deleted = 0
             <if test="labId != null">AND lab_id = #{labId}</if>
             <if test="deviceId != null">AND device_id = #{deviceId}</if>
             <if test="requesterId != null">AND requester_id = #{requesterId}</if>
@@ -49,6 +50,7 @@
     <select id="countReservations" resultType="long">
         SELECT COUNT(1) FROM reservations
         <where>
+            AND is_deleted = 0
             <if test="labId != null">AND lab_id = #{labId}</if>
             <if test="deviceId != null">AND device_id = #{deviceId}</if>
             <if test="requesterId != null">AND requester_id = #{requesterId}</if>
@@ -88,6 +90,7 @@
     <select id="findConflicts" resultMap="ReservationMap">
         SELECT * FROM reservations
         WHERE ((lab_id = #{labId}) OR (device_id = #{deviceId}))
+          AND is_deleted = 0
           AND start_time &lt; #{endTime}
           AND end_time &gt; #{startTime}
           <if test="excludeId != null">AND id != #{excludeId}</if>
@@ -96,6 +99,7 @@
     <select id="findCalendar" resultMap="ReservationMap">
         SELECT * FROM reservations
         WHERE start_time &lt;= #{toTime} AND end_time &gt;= #{fromTime}
+        AND is_deleted = 0
         <if test="labId != null">AND lab_id = #{labId}</if>
         <if test="deviceId != null">AND device_id = #{deviceId}</if>
         ORDER BY start_time ASC

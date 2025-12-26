@@ -17,16 +17,17 @@
     </resultMap>
 
     <select id="findById" resultMap="UserMap">
-        SELECT * FROM users WHERE id = #{id}
+        SELECT * FROM users WHERE id = #{id} AND is_deleted = 0
     </select>
 
     <select id="findByName" resultMap="UserMap">
-        SELECT * FROM users WHERE name = #{name} LIMIT 1
+        SELECT * FROM users WHERE name = #{name} AND is_deleted = 0 LIMIT 1
     </select>
 
     <select id="findUsers" resultMap="UserMap">
         SELECT * FROM users
         <where>
+            AND is_deleted = 0
             <if test="role != null and role != ''">AND role = #{role}</if>
             <if test="status != null and status != ''">AND status = #{status}</if>
         </where>
@@ -37,6 +38,7 @@
     <select id="countUsers" resultType="long">
         SELECT COUNT(1) FROM users
         <where>
+            AND is_deleted = 0
             <if test="role != null and role != ''">AND role = #{role}</if>
             <if test="status != null and status != ''">AND status = #{status}</if>
         </where>

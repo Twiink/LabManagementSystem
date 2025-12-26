@@ -28,7 +28,7 @@ public class User {
     private String status;
     @Column(name = "password_hash")
     private String passwordHash;
-    @Column(name = "is_deleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "TINYINT DEFAULT 0")
     private Integer isDeleted = 0;
     @Column(name = "created_at")
     private LocalDateTime createdAt;

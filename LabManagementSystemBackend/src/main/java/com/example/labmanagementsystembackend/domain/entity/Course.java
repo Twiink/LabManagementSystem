@@ -26,7 +26,7 @@ public class Course {
     private String term;
     @Column(name = "created_by", nullable = false)
     private Long createdBy;
-    @Column(name = "is_deleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "TINYINT DEFAULT 0")
     private Integer isDeleted = 0;
     @Column(name = "created_at")
     private LocalDateTime createdAt;

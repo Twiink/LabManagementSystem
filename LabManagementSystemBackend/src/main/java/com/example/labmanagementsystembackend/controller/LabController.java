@@ -9,6 +9,7 @@ import com.example.labmanagementsystembackend.dto.response.LabResponse;
 import com.example.labmanagementsystembackend.service.LabService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,11 +35,13 @@ public class LabController extends BaseController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<LabResponse> createLab(@Valid @RequestBody LabCreateRequest body, HttpServletRequest request) {
         return success(request, labService.createLab(body));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<LabResponse> updateLab(@PathVariable Long id,
                                               @Valid @RequestBody LabUpdateRequest body,
                                               HttpServletRequest request) {
@@ -46,6 +49,7 @@ public class LabController extends BaseController {
     }
 
     @PatchMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> updateStatus(@PathVariable Long id,
                                           @Valid @RequestBody LabStatusUpdateRequest body,
                                           HttpServletRequest request) {

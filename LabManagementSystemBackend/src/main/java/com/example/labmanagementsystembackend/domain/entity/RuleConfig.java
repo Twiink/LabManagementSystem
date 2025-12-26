@@ -22,7 +22,7 @@ public class RuleConfig {
     private String value;
     @Column(name = "description")
     private String description;
-    @Column(name = "is_deleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "TINYINT DEFAULT 0")
     private Integer isDeleted = 0;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
