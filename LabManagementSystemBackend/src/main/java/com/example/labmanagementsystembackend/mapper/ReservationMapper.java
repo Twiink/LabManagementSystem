@@ -45,4 +45,22 @@ public interface ReservationMapper {
                                    @Param("deviceId") Long deviceId,
                                    @Param("fromTime") LocalDateTime fromTime,
                                    @Param("toTime") LocalDateTime toTime);
+
+    /**
+     * 查找过期未签到的预约
+     * 条件：APPROVED 状态且开始时间早于阈值
+     */
+    List<Reservation> findExpiredReservations(@Param("threshold") LocalDateTime threshold);
+
+    /**
+     * 查找超时未签出的预约
+     * 条件：IN_USE 状态且结束时间早于阈值
+     */
+    List<Reservation> findOverdueReservations(@Param("threshold") LocalDateTime threshold);
+
+    /**
+     * 查找长期未处理的待审批预约
+     * 条件：PENDING 状态且创建时间早于阈值
+     */
+    List<Reservation> findOldPendingReservations(@Param("threshold") LocalDateTime threshold);
 }

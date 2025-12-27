@@ -43,4 +43,19 @@
         INSERT INTO courses (name, class_name, student_count, term, created_by, is_deleted)
         VALUES (#{name}, #{className}, #{studentCount}, #{term}, #{createdBy}, #{isDeleted})
     </insert>
+
+    <!-- 更新课程信息 -->
+    <update id="updateCourse">
+        UPDATE courses
+        SET name = #{name},
+            class_name = #{className},
+            student_count = #{studentCount},
+            term = #{term}
+        WHERE id = #{id} AND is_deleted = 0
+    </update>
+
+    <!-- 软删除课程 -->
+    <update id="deleteCourse">
+        UPDATE courses SET is_deleted = 1 WHERE id = #{id}
+    </update>
 </mapper>

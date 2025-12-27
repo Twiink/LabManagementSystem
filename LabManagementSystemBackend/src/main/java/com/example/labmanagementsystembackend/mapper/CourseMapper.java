@@ -18,4 +18,14 @@ public interface CourseMapper {
     long countCourses(@Param("createdBy") Long createdBy, @Param("term") String term);
 
     int insertCourse(Course course);
+
+    /**
+     * 更新课程信息
+     */
+    int updateCourse(Course course);
+
+    /**
+     * 软删除课程
+     */
+    int deleteCourse(@Param("id") Long id);
 }

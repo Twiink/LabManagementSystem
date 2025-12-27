@@ -87,12 +87,25 @@
         WHERE id = #{id}
     </update>
 
+    <!--
+        冲突检测查询：
+        规则：时间重叠 = startA < endB AND endA > startB
+        条件：
+        1. 同一实验室的预约
+        2. 如果指定了设备，则还需检测同一设备的冲突
+        3. 只检测有效状态的预约（PENDING/APPROVED/IN_USE）
+        4. 排除已删除的记录
+    -->
     <select id="findConflicts" resultMap="ReservationMap">
         SELECT * FROM reservations
-        WHERE ((lab_id = #{labId}) OR (device_id = #{deviceId}))
+        WHERE lab_id = #{labId}
           AND is_deleted = 0
+          AND status IN ('PENDING', 'APPROVED', 'IN_USE')
           AND start_time &lt; #{endTime}
           AND end_time &gt; #{startTime}
+          <if test="deviceId != null">
+              AND (device_id IS NULL OR device_id = #{deviceId})
+          </if>
           <if test="excludeId != null">AND id != #{excludeId}</if>
     </select>
 
@@ -103,5 +116,32 @@
         <if test="labId != null">AND lab_id = #{labId}</if>
         <if test="deviceId != null">AND device_id = #{deviceId}</if>
         ORDER BY start_time ASC
+    </select>
+
+    <!-- 查找过期未签到的预约：APPROVED 状态且开始时间已过阈值 -->
+    <select id="findExpiredReservations" resultMap="ReservationMap">
+        SELECT * FROM reservations
+        WHERE status = 'APPROVED'
+          AND start_time &lt; #{threshold}
+          AND is_deleted = 0
+        ORDER BY start_time ASC
+    </select>
+
+    <!-- 查找超时未签出的预约：IN_USE 状态且结束时间已过阈值 -->
+    <select id="findOverdueReservations" resultMap="ReservationMap">
+        SELECT * FROM reservations
+        WHERE status = 'IN_USE'
+          AND end_time &lt; #{threshold}
+          AND is_deleted = 0
+        ORDER BY end_time ASC
+    </select>
+
+    <!-- 查找长期未处理的待审批预约：PENDING 状态且创建时间已过阈值 -->
+    <select id="findOldPendingReservations" resultMap="ReservationMap">
+        SELECT * FROM reservations
+        WHERE status = 'PENDING'
+          AND created_at &lt; #{threshold}
+          AND is_deleted = 0
+        ORDER BY created_at ASC
     </select>
 </mapper>

@@ -226,9 +226,15 @@ public class ReservationService {
         notificationService.notifyUser(reservation.getRequesterId(), "RESERVATION", "Reservation cancelled");
     }
 
+    /**
+     * 预约签到（开始使用）
+     * 权限：预约人本人或管理员可操作
+     */
     @Transactional
     public void checkin(Long operatorId, Long reservationId) {
         Reservation reservation = getReservationEntity(reservationId);
+        // 权限校验：只有预约人或管理员可以签到
+        validateOperationPermission(operatorId, reservation, "check-in");
         if (!"APPROVED".equals(reservation.getStatus())) {
             throw new BusinessException(ErrorCode.INVALID_STATE, "Reservation state does not allow check-in");
         }
@@ -237,9 +243,15 @@ public class ReservationService {
         auditLogService.record(operatorId, "RESERVATION_CHECKIN", "RESERVATION", reservation.getId(), null);
     }
 
+    /**
+     * 预约签出（结束使用）
+     * 权限：预约人本人或管理员可操作
+     */
     @Transactional
     public void checkout(Long operatorId, Long reservationId) {
         Reservation reservation = getReservationEntity(reservationId);
+        // 权限校验：只有预约人或管理员可以签出
+        validateOperationPermission(operatorId, reservation, "check-out");
         if (!"IN_USE".equals(reservation.getStatus())) {
             throw new BusinessException(ErrorCode.INVALID_STATE, "Reservation state does not allow check-out");
         }
@@ -423,6 +435,23 @@ public class ReservationService {
         }
         if ("STUDENT".equals(requester.getRole()) && hours < STUDENT_CANCEL_HOURS) {
             throw new BusinessException(ErrorCode.RESERVATION_WINDOW_INVALID, "Students must cancel at least 24 hours in advance");
+        }
+    }
+
+    /**
+     * 验证操作权限（签到/签出等）
+     * 规则：预约人本人或管理员可操作
+     */
+    private void validateOperationPermission(Long operatorId, Reservation reservation, String operation) {
+        User operator = userService.getUserEntity(operatorId);
+        // 管理员可以操作任何预约
+        if ("ADMIN".equals(operator.getRole())) {
+            return;
+        }
+        // 非管理员只能操作自己的预约
+        if (!operatorId.equals(reservation.getRequesterId())) {
+            throw new BusinessException(ErrorCode.PERMISSION_DENIED,
+                "Only reservation owner or admin can " + operation);
         }
     }
 
