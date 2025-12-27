@@ -24,6 +24,15 @@
         SELECT * FROM users WHERE name = #{name} AND is_deleted = 0 LIMIT 1
     </select>
 
+    <select id="findByEmail" resultMap="UserMap">
+        SELECT * FROM users WHERE email = #{email} AND is_deleted = 0 LIMIT 1
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO users (name, email, phone, role, status, password_hash, is_deleted, created_at, updated_at)
+        VALUES (#{name}, #{email}, #{phone}, #{role}, #{status}, #{passwordHash}, #{isDeleted}, #{createdAt}, #{updatedAt})
+    </insert>
+
     <select id="findUsers" resultMap="UserMap">
         SELECT * FROM users
         <where>

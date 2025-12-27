@@ -6,21 +6,22 @@
   <component name="ChangeListManager">
     <list default="true" id="3483be0a-be0b-47d0-8511-359ce038334f" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/common/error/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/common/error/GlobalExceptionHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/AuditLogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/AuditLogController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/CourseController.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/CourseController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/DeviceController.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/DeviceController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/LabController.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/LabController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/NotificationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/NotificationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/ReservationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/ReservationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/RuleConfigController.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/RuleConfigController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/mapper/NotificationMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/mapper/NotificationMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/request/LoginRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/request/LoginRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/mapper/UserMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/mapper/UserMapper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/AuthService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/NotificationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/NotificationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/resources/mappers/NotificationMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/resources/mappers/NotificationMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/resources/mappers/UserMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/resources/mappers/UserMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/api/auth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/api/auth.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/api/mock.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/api/request.ts" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/api/request.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/dashboard/Dashboard.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/dashboard/Dashboard.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/devices/DeviceList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/devices/DeviceList.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/labs/LabList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/labs/LabList.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/login/Login.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/login/Login.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/login/Register.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/login/Register.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/reservations/ReservationList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/reservations/ReservationList.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,6 +64,7 @@
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/Users/mac/ProjectStation/LabManagementSystem",
     "nodejs_package_manager_path": "npm",
+    "ts.external.directory.path": "/Users/mac/ProjectStation/LabManagementSystem/LabManagementSystemFrontend/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -91,7 +93,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1766762894696</updated>
-      <workItem from="1766762897753" duration="6805000" />
+      <workItem from="1766762897753" duration="15116000" />
     </task>
     <servers />
   </component>

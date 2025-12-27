@@ -12,6 +12,10 @@ public interface UserMapper {
 
     User findByName(@Param("name") String name);
 
+    User findByEmail(@Param("email") String email);
+
+    int insert(User user);
+
     List<User> findUsers(@Param("role") String role,
                          @Param("status") String status,
                          @Param("offset") int offset,
