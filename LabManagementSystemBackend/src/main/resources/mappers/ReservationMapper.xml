@@ -9,6 +9,7 @@
         <result column="lab_id" property="labId" />
         <result column="device_id" property="deviceId" />
         <result column="course_id" property="courseId" />
+        <result column="title" property="title" />
         <result column="start_time" property="startTime" />
         <result column="end_time" property="endTime" />
         <result column="status" property="status" />
@@ -67,8 +68,8 @@
     </select>
 
     <insert id="insertReservation" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO reservations (requester_id, lab_id, device_id, course_id, start_time, end_time, status, type, priority, is_deleted)
-        VALUES (#{requesterId}, #{labId}, #{deviceId}, #{courseId}, #{startTime}, #{endTime}, #{status}, #{type}, #{priority}, #{isDeleted})
+        INSERT INTO reservations (requester_id, lab_id, device_id, course_id, title, start_time, end_time, status, type, priority, is_deleted)
+        VALUES (#{requesterId}, #{labId}, #{deviceId}, #{courseId}, #{title}, #{startTime}, #{endTime}, #{status}, #{type}, #{priority}, #{isDeleted})
     </insert>
 
     <update id="updateReservationTime">

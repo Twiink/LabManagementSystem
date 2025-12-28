@@ -179,8 +179,10 @@ const handleLogin = async () => {
       userStore.setToken(res.data.accessToken)
       userStore.setUserInfo({
         id: res.data.user.id,
+        username: res.data.user.username || form.username,
         name: res.data.user.name,
-        role: res.data.user.role
+        role: res.data.user.role,
+        status: res.data.user.status || 'ACTIVE'
       })
 
       ElMessage.success(`登录成功，欢迎 ${res.data.user.name}`)

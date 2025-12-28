@@ -24,6 +24,8 @@ public class Reservation {
     private Long deviceId;
     @Column(name = "course_id")
     private Long courseId;
+    @Column(name = "title")
+    private String title;
     @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
     @Column(name = "end_time", nullable = false)
@@ -85,6 +87,14 @@ public class Reservation {
 
     public void setCourseId(Long courseId) {
         this.courseId = courseId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public LocalDateTime getStartTime() {

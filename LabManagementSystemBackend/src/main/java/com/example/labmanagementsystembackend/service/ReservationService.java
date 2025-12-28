@@ -113,15 +113,13 @@ public class ReservationService {
         reservation.setRequesterId(requesterId);
         reservation.setLabId(request.getLabId());
         reservation.setDeviceId(request.getDeviceId());
+        reservation.setTitle(request.getTitle());
         reservation.setStartTime(startTime);
         reservation.setEndTime(endTime);
         reservation.setType("SINGLE");
         reservation.setPriority("NORMAL");
-        if (request.getDeviceId() != null) {
-            reservation.setStatus("PENDING");
-        } else {
-            reservation.setStatus("APPROVED");
-        }
+        // 所有预约都需要审批
+        reservation.setStatus("PENDING");
         reservationMapper.insertReservation(reservation);
 
         auditLogService.record(requesterId, "RESERVATION_CREATE", "RESERVATION", reservation.getId(), null);
@@ -551,7 +549,7 @@ public class ReservationService {
 
     private static ReservationResponse toResponse(Reservation reservation) {
         return new ReservationResponse(reservation.getId(), reservation.getRequesterId(), reservation.getLabId(),
-                reservation.getDeviceId(), reservation.getCourseId(),
+                reservation.getDeviceId(), reservation.getCourseId(), reservation.getTitle(),
                 TimeUtil.fromUtcLocalDateTime(reservation.getStartTime()),
                 TimeUtil.fromUtcLocalDateTime(reservation.getEndTime()),
                 reservation.getStatus(), reservation.getType(), reservation.getPriority());

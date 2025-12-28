@@ -2,7 +2,7 @@
   <div class="dashboard-container">
     <!-- Stat Cards -->
     <el-row :gutter="20">
-      <el-col :span="6" v-for="(stat, index) in statItems" :key="index">
+      <el-col :span="6" v-for="(stat, index) in filteredStatItems" :key="index">
         <div class="glass-card stat-card" @click="stat.route ? router.push(stat.route) : null">
           <div class="icon-wrapper" :class="stat.bgClass">
             <el-icon><component :is="stat.icon" /></el-icon>
@@ -34,11 +34,13 @@
     <!-- Recent Reservations -->
     <div class="glass-card" style="margin-top: 20px;">
       <div class="card-header">
-        <h3>近期预约</h3>
-        <el-button link type="primary" @click="router.push('/reservations')">查看全部</el-button>
+        <h3>{{ userStore.isAdmin ? '近期预约' : '我的预约' }}</h3>
+        <el-button link type="primary" @click="router.push(reservationRoute)">查看全部</el-button>
       </div>
       <el-table :data="recentReservations" style="width: 100%" v-loading="loadingReservations">
         <el-table-column prop="title" label="预约事项" />
+        <el-table-column v-if="userStore.isAdmin" prop="userName" label="申请人" width="100" />
+        <el-table-column prop="resourceName" label="资源" width="150" />
         <el-table-column prop="startTime" label="开始时间">
           <template #default="scope">
             {{ formatDateTime(scope.row.startTime) }}
@@ -49,9 +51,9 @@
             {{ formatDateTime(scope.row.endTime) }}
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" width="120">
+        <el-table-column prop="status" label="状态" width="100">
           <template #default="scope">
-            <el-tag :type="getStatusType(scope.row.status)" effect="dark" round>{{ getStatusLabel(scope.row.status) }}</el-tag>
+            <el-tag :type="getStatusType(scope.row.status)" effect="dark" round size="small">{{ getStatusLabel(scope.row.status) }}</el-tag>
           </template>
         </el-table-column>
       </el-table>
@@ -60,30 +62,58 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, nextTick, reactive } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/store/user'
 import { getLabList } from '@/api/lab'
 import { getDeviceList } from '@/api/device'
 import { getReservationList } from '@/api/reservation'
 import * as echarts from 'echarts'
 
 const router = useRouter()
+const userStore = useUserStore()
+
+// 根据角色确定预约页面路由
+const reservationRoute = computed(() => {
+  if (userStore.isAdmin) return '/reservations'
+  return '/my-reservations'
+})
 
 // 统计数据
 const stats = reactive({
   totalLabs: 0,
   totalDevices: 0,
   activeReservations: 0,
-  pendingApprovals: 0
+  pendingApprovals: 0,
+  myReservations: 0
 })
 
-// Stats Data
-const statItems = ref([
-  { label: '实验室总数', value: 0, icon: 'OfficeBuilding', bgClass: 'bg-blue', route: '/labs' },
-  { label: '设备总数', value: 0, icon: 'Monitor', bgClass: 'bg-green', route: '/devices' },
-  { label: '当前预约', value: 0, icon: 'Calendar', bgClass: 'bg-orange', route: '/reservations' },
-  { label: '待审批', value: 0, icon: 'Bell', bgClass: 'bg-red', route: '/reservations' },
+// 根据角色显示不同的统计项
+const allStatItems = ref([
+  { label: '实验室总数', value: 0, icon: 'OfficeBuilding', bgClass: 'bg-blue', route: '', roles: ['ADMIN', 'TEACHER', 'STUDENT'] },
+  { label: '设备总数', value: 0, icon: 'Monitor', bgClass: 'bg-green', route: '', roles: ['ADMIN', 'TEACHER', 'STUDENT'] },
+  { label: '我的预约', value: 0, icon: 'Calendar', bgClass: 'bg-orange', route: '/my-reservations', roles: ['TEACHER', 'STUDENT'] },
+  { label: '当前预约', value: 0, icon: 'Calendar', bgClass: 'bg-orange', route: '/reservations', roles: ['ADMIN'] },
+  { label: '待审批', value: 0, icon: 'Bell', bgClass: 'bg-red', route: '/approval', roles: ['TEACHER'] },
+  { label: '待审批', value: 0, icon: 'Bell', bgClass: 'bg-red', route: '/reservations', roles: ['ADMIN'] },
 ])
+
+// 根据用户角色过滤统计项
+const filteredStatItems = computed(() => {
+  const role = userStore.role || 'STUDENT'
+  const items = allStatItems.value.filter(item => item.roles.includes(role))
+
+  // 设置路由
+  items.forEach(item => {
+    if (item.label === '实验室总数') {
+      item.route = userStore.isAdmin ? '/lab-manage' : '/labs'
+    } else if (item.label === '设备总数') {
+      item.route = userStore.isAdmin ? '/device-manage' : '/devices'
+    }
+  })
+
+  return items
+})
 
 const recentReservations = ref<any[]>([])
 const loadingReservations = ref(false)
@@ -96,11 +126,29 @@ const deviceStats = reactive({
   maintenance: 0
 })
 
+// 资源列表（用于显示名称）
+const labs = ref<any[]>([])
+const devices = ref<any[]>([])
+
 // Charts
 const deviceChartRef = ref<HTMLElement | null>(null)
 const labChartRef = ref<HTMLElement | null>(null)
 let deviceChart: echarts.ECharts | null = null
 let labChart: echarts.ECharts | null = null
+
+// 加载资源列表
+const loadResources = async () => {
+  try {
+    const [labRes, deviceRes] = await Promise.all([
+      getLabList({ page: 1, pageSize: 100 }),
+      getDeviceList({ page: 1, pageSize: 100 })
+    ])
+    labs.value = labRes.data.items || []
+    devices.value = deviceRes.data.items || []
+  } catch (error) {
+    console.error('加载资源列表失败:', error)
+  }
+}
 
 // 加载统计数据
 const loadStats = async () => {
@@ -108,32 +156,71 @@ const loadStats = async () => {
     // 加载实验室数据
     const labRes = await getLabList({ page: 1, pageSize: 1 })
     stats.totalLabs = labRes.data.total
-    statItems.value[0].value = stats.totalLabs
+    const labItem = allStatItems.value.find(i => i.label === '实验室总数')
+    if (labItem) labItem.value = stats.totalLabs
 
     // 加载设备数据
     const deviceRes = await getDeviceList({ page: 1, pageSize: 200 })
     stats.totalDevices = deviceRes.data.total
-    statItems.value[1].value = stats.totalDevices
+    const deviceItem = allStatItems.value.find(i => i.label === '设备总数')
+    if (deviceItem) deviceItem.value = stats.totalDevices
 
     // 统计设备状态
-    const devices = deviceRes.data.items || []
-    deviceStats.idle = devices.filter((d: any) => d.status === 'IDLE').length
-    deviceStats.inUse = devices.filter((d: any) => d.status === 'IN_USE').length
-    deviceStats.reserved = devices.filter((d: any) => d.status === 'RESERVED').length
-    deviceStats.maintenance = devices.filter((d: any) => d.status === 'MAINTENANCE').length
+    const devicesList = deviceRes.data.items || []
+    deviceStats.idle = devicesList.filter((d: any) => d.status === 'IDLE').length
+    deviceStats.inUse = devicesList.filter((d: any) => d.status === 'IN_USE').length
+    deviceStats.reserved = devicesList.filter((d: any) => d.status === 'RESERVED').length
+    deviceStats.maintenance = devicesList.filter((d: any) => d.status === 'MAINTENANCE').length
 
     // 加载预约数据
     loadingReservations.value = true
-    const reservationRes = await getReservationList({ page: 1, pageSize: 10 })
-    recentReservations.value = reservationRes.data.items || []
+    const reservationParams: any = { page: 1, pageSize: 10 }
+
+    // 非管理员只加载自己的预约
+    if (!userStore.isAdmin) {
+      reservationParams.requesterId = userStore.userInfo?.id
+    }
+
+    const reservationRes = await getReservationList(reservationParams)
+    const items = reservationRes.data.items || []
+
+    // 添加资源名称
+    recentReservations.value = items.map((item: any) => ({
+      ...item,
+      resourceName: item.labId
+        ? labs.value.find(l => l.id === item.labId)?.name || `实验室 ${item.labId}`
+        : devices.value.find(d => d.id === item.deviceId)?.name || `设备 ${item.deviceId}`,
+      userName: item.requester?.name || item.userName || '未知用户'
+    }))
 
     // 统计当前预约和待审批
-    const allReservations = await getReservationList({ page: 1, pageSize: 200 })
-    const reservations = allReservations.data.items || []
-    stats.activeReservations = reservations.filter((r: any) => ['APPROVED', 'IN_USE'].includes(r.status)).length
-    stats.pendingApprovals = reservations.filter((r: any) => r.status === 'PENDING').length
-    statItems.value[2].value = stats.activeReservations
-    statItems.value[3].value = stats.pendingApprovals
+    const allReservationsRes = await getReservationList({ page: 1, pageSize: 200 })
+    const allReservations = allReservationsRes.data.items || []
+
+    if (userStore.isAdmin) {
+      stats.activeReservations = allReservations.filter((r: any) => ['APPROVED', 'IN_USE'].includes(r.status)).length
+      stats.pendingApprovals = allReservations.filter((r: any) => r.status === 'PENDING').length
+
+      const activeItem = allStatItems.value.find(i => i.label === '当前预约' && i.roles.includes('ADMIN'))
+      if (activeItem) activeItem.value = stats.activeReservations
+
+      const pendingItem = allStatItems.value.find(i => i.label === '待审批' && i.roles.includes('ADMIN'))
+      if (pendingItem) pendingItem.value = stats.pendingApprovals
+    } else {
+      // 学生/教师显示自己的预约数
+      const myReservations = allReservations.filter((r: any) => r.requesterId === userStore.userInfo?.id)
+      stats.myReservations = myReservations.length
+
+      const myItem = allStatItems.value.find(i => i.label === '我的预约')
+      if (myItem) myItem.value = stats.myReservations
+
+      // 教师显示待审批数
+      if (userStore.isTeacher) {
+        stats.pendingApprovals = allReservations.filter((r: any) => r.status === 'PENDING').length
+        const pendingItem = allStatItems.value.find(i => i.label === '待审批' && i.roles.includes('TEACHER'))
+        if (pendingItem) pendingItem.value = stats.pendingApprovals
+      }
+    }
 
     loadingReservations.value = false
 
@@ -169,7 +256,7 @@ const initCharts = () => {
           type: 'bar',
           barWidth: '60%',
           itemStyle: { borderRadius: [5, 5, 0, 0], color: '#409eff' },
-          data: [0, 0, 0, 0, 0, 0, 0]
+          data: [12, 8, 15, 10, 14, 3, 2]
         }
       ]
     })
@@ -208,7 +295,8 @@ const handleResize = () => {
   labChart?.resize()
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await loadResources()
   nextTick(() => {
     initCharts()
     loadStats()
@@ -229,7 +317,8 @@ const getStatusType = (status: string) => {
     REJECTED: 'danger',
     CANCELLED: 'info',
     IN_USE: 'primary',
-    COMPLETED: 'success'
+    COMPLETED: 'success',
+    EXPIRED: 'info'
   }
   return map[status] || ''
 }
@@ -241,7 +330,8 @@ const getStatusLabel = (status: string) => {
     REJECTED: '已驳回',
     CANCELLED: '已取消',
     IN_USE: '使用中',
-    COMPLETED: '已完成'
+    COMPLETED: '已完成',
+    EXPIRED: '已过期'
   }
   return map[status] || status
 }

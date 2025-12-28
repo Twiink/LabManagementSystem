@@ -226,17 +226,35 @@ export interface CreateReservationParams {
 }
 
 /**
+ * 批量预约规则类型
+ */
+export type SeriesRuleType = 'DAILY' | 'WEEKLY' | 'CUSTOM'
+
+/**
+ * 批量预约规则
+ */
+export interface SeriesRule {
+  type: SeriesRuleType
+  value: {
+    count?: number           // DAILY/WEEKLY: 重复次数
+    interval?: number        // DAILY: 间隔天数
+    daysOfWeek?: number[]    // WEEKLY: 周几 (1-7, 1=周一)
+    dates?: string[]         // CUSTOM: 自定义日期数组
+  }
+  mode: 'STRICT' | 'LENIENT'  // STRICT: 有冲突则全部失败; LENIENT: 跳过冲突继续创建
+}
+
+/**
  * 创建系列预约请求参数
  */
 export interface CreateSeriesReservationParams {
   labId: number
   deviceId?: number
-  title: string
-  slots: Array<{
+  rule: SeriesRule
+  time: {
     startTime: string
     endTime: string
-  }>
-  remark?: string
+  }
 }
 
 /**

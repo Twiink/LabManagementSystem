@@ -15,7 +15,8 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleSearch">查询</el-button>
-          <el-button type="success" @click="handleAdd" icon="Plus">新增实验室</el-button>
+          <!-- 只有管理员可以新增实验室 -->
+          <el-button v-if="userStore.isAdmin" type="success" @click="handleAdd" icon="Plus">新增实验室</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -32,8 +33,15 @@
         </el-table-column>
         <el-table-column label="操作" width="200">
           <template #default="scope">
-            <el-button link type="primary" size="small" @click="handleEdit(scope.row)">编辑</el-button>
-            <el-button link type="danger" size="small" @click="handleDelete(scope.row.id)">删除</el-button>
+            <!-- 学生和教师可以预约空闲实验室 -->
+            <el-button
+              v-if="!userStore.isAdmin && scope.row.status === 'IDLE'"
+              link type="primary" size="small"
+              @click="handleReserve(scope.row)"
+            >预约</el-button>
+            <!-- 管理员可以编辑和删除 -->
+            <el-button v-if="userStore.isAdmin" link type="primary" size="small" @click="handleEdit(scope.row)">编辑</el-button>
+            <el-button v-if="userStore.isAdmin" link type="danger" size="small" @click="handleDelete(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -49,7 +57,7 @@
       </div>
     </div>
 
-    <!-- Edit/Add Dialog -->
+    <!-- Edit/Add Dialog (管理员专用) -->
     <el-dialog v-model="dialogVisible" :title="dialogType === 'add' ? '新增实验室' : '编辑实验室'" width="500px">
       <el-form :model="form" label-width="80px">
         <el-form-item label="名称">
@@ -80,13 +88,43 @@
         </span>
       </template>
     </el-dialog>
+
+    <!-- 预约弹窗 (学生/教师使用) -->
+    <el-dialog v-model="reserveDialogVisible" title="实验室预约" width="500px">
+      <el-form :model="reserveForm" label-width="100px">
+        <el-form-item label="实验室">
+          <el-input :value="reserveForm.labName" disabled />
+        </el-form-item>
+        <el-form-item label="预约事项">
+          <el-input v-model="reserveForm.title" placeholder="请输入预约事项，如：分析化学实验" />
+        </el-form-item>
+        <el-form-item label="时间段">
+          <el-date-picker
+            v-model="reserveForm.timeRange"
+            type="datetimerange"
+            range-separator="至"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            style="width: 100%"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="reserveDialogVisible = false">取消</el-button>
+        <el-button type="primary" :loading="submitting" @click="handleReserveSubmit">提交预约</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
+import { useUserStore } from '@/store/user'
 import { getLabList, createLab, updateLab, updateLabStatus } from '@/api/lab'
+import { createReservation } from '@/api/reservation'
 import { ElMessage, ElMessageBox } from 'element-plus'
+
+const userStore = useUserStore()
 
 const searchQuery = ref('')
 const statusFilter = ref('')
@@ -108,6 +146,15 @@ const form = reactive({
   status: 'IDLE'
 })
 
+// 预约表单
+const reserveDialogVisible = ref(false)
+const reserveForm = reactive({
+  labId: 0,
+  labName: '',
+  title: '',
+  timeRange: [] as Date[]
+})
+
 // 加载数据
 const loadData = async () => {
   loading.value = true
@@ -115,7 +162,7 @@ const loadData = async () => {
     const res = await getLabList({
       page: currentPage.value,
       pageSize: pageSize.value,
-      status: statusFilter.value || undefined,
+      status: (statusFilter.value || undefined) as any,
       keyword: searchQuery.value || undefined
     })
     tableData.value = res.data.items || []
@@ -170,7 +217,6 @@ const handleDelete = (id: number) => {
     type: 'warning'
   }).then(async () => {
     try {
-      // 更新状态为已删除（软删除）
       await updateLabStatus(id, { status: 'DISABLED' })
       ElMessage.success('删除成功')
       loadData()
@@ -203,7 +249,6 @@ const handleSubmit = async () => {
         capacity: form.capacity,
         description: form.description
       })
-      // 如果状态变化，单独更新状态
       const originalItem = tableData.value.find(item => item.id === form.id)
       if (originalItem && originalItem.status !== form.status) {
         await updateLabStatus(form.id, { status: form.status as any })
@@ -214,6 +259,39 @@ const handleSubmit = async () => {
     loadData()
   } catch (error) {
     console.error('提交失败:', error)
+  } finally {
+    submitting.value = false
+  }
+}
+
+// 预约实验室
+const handleReserve = (row: any) => {
+  reserveForm.labId = row.id
+  reserveForm.labName = row.name
+  reserveForm.title = ''
+  reserveForm.timeRange = []
+  reserveDialogVisible.value = true
+}
+
+const handleReserveSubmit = async () => {
+  if (!reserveForm.title || !reserveForm.timeRange || reserveForm.timeRange.length !== 2) {
+    ElMessage.warning('请填写完整信息')
+    return
+  }
+
+  submitting.value = true
+  try {
+    await createReservation({
+      labId: reserveForm.labId,
+      title: reserveForm.title,
+      startTime: reserveForm.timeRange[0]!.toISOString(),
+      endTime: reserveForm.timeRange[1]!.toISOString()
+    })
+    ElMessage.success('预约申请已提交')
+    reserveDialogVisible.value = false
+    loadData()
+  } catch (error) {
+    console.error('预约失败:', error)
   } finally {
     submitting.value = false
   }

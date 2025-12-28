@@ -12,10 +12,10 @@
         :collapse="isCollapse"
         router
       >
-        <template v-for="route in menuRoutes" :key="route.path">
-           <el-menu-item :index="route.path">
-            <el-icon><component :is="route.meta?.icon" /></el-icon>
-            <template #title>{{ route.meta?.title }}</template>
+        <template v-for="item in menuRoutes" :key="item.path">
+           <el-menu-item :index="'/' + item.path">
+            <el-icon><component :is="item.meta?.icon" /></el-icon>
+            <template #title>{{ item.meta?.title }}</template>
           </el-menu-item>
         </template>
       </el-menu>
@@ -38,9 +38,9 @@
         <div class="right">
           <el-dropdown>
             <span class="el-dropdown-link" style="color: var(--text-main); cursor: pointer; display: flex; align-items: center;">
-              <el-avatar :size="32" style="margin-right: 8px; background-color: var(--primary-color)">{{ userStore.userInfo.name?.[0]?.toUpperCase() }}</el-avatar>
-              {{ userStore.userInfo.name || 'User' }}
-              <el-tag size="small" style="margin-left: 8px" effect="plain">{{ userStore.userInfo.role }}</el-tag>
+              <el-avatar :size="32" style="margin-right: 8px; background-color: var(--primary-color)">{{ userStore.userInfo?.name?.[0]?.toUpperCase() || 'U' }}</el-avatar>
+              {{ userStore.userInfo?.name || 'User' }}
+              <el-tag size="small" style="margin-left: 8px" effect="plain">{{ userStore.userInfo?.role || '未知' }}</el-tag>
               <el-icon class="el-icon--right"><arrow-down /></el-icon>
             </span>
             <template #dropdown>
@@ -80,9 +80,7 @@ const currentRouteName = computed(() => route.meta.title || '')
 
 // Filter routes for sidebar based on role
 const menuRoutes = computed(() => {
-  const userRole = userStore.userInfo.role || 'GUEST'
-  // Get the children of the main layout route (which is at index 2 in our router definition)
-  // A robust app would have a recursive generator, but for this structure:
+  const userRole = userStore.userInfo?.role || 'GUEST'
   const mainRoute = router.options.routes.find(r => r.path === '/')
   if (!mainRoute || !mainRoute.children) return []
 
@@ -90,7 +88,7 @@ const menuRoutes = computed(() => {
     if (child.meta && child.meta.roles) {
       return child.meta.roles.includes(userRole)
     }
-    return true // Default visible if no roles defined
+    return true
   })
 })
 

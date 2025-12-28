@@ -8,19 +8,21 @@ public class ReservationResponse {
     private Long labId;
     private Long deviceId;
     private Long courseId;
+    private String title;
     private OffsetDateTime startTime;
     private OffsetDateTime endTime;
     private String status;
     private String type;
     private String priority;
 
-    public ReservationResponse(Long id, Long requesterId, Long labId, Long deviceId, Long courseId,
+    public ReservationResponse(Long id, Long requesterId, Long labId, Long deviceId, Long courseId, String title,
                                OffsetDateTime startTime, OffsetDateTime endTime, String status, String type, String priority) {
         this.id = id;
         this.requesterId = requesterId;
         this.labId = labId;
         this.deviceId = deviceId;
         this.courseId = courseId;
+        this.title = title;
         this.startTime = startTime;
         this.endTime = endTime;
         this.status = status;
@@ -46,6 +48,10 @@ public class ReservationResponse {
 
     public Long getCourseId() {
         return courseId;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     public OffsetDateTime getStartTime() {

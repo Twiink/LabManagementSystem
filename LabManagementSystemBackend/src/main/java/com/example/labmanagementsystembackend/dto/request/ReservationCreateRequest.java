@@ -8,6 +8,7 @@ public class ReservationCreateRequest {
     @NotNull
     private Long labId;
     private Long deviceId;
+    private String title;
     @NotNull
     private OffsetDateTime startTime;
     @NotNull
@@ -28,6 +29,14 @@ public class ReservationCreateRequest {
 
     public void setDeviceId(Long deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public OffsetDateTime getStartTime() {
