@@ -12,9 +12,8 @@ public class LabUpdateRequest {
     private String location;
     @NotNull
     private Integer capacity;
-    @NotNull
+    private String description;
     private LocalTime openTimeStart;
-    @NotNull
     private LocalTime openTimeEnd;
 
     public String getName() {
@@ -39,6 +38,14 @@ public class LabUpdateRequest {
 
     public void setCapacity(Integer capacity) {
         this.capacity = capacity;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public LocalTime getOpenTimeStart() {

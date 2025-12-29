@@ -9,6 +9,8 @@
         <result column="class_name" property="className" />
         <result column="student_count" property="studentCount" />
         <result column="term" property="term" />
+        <result column="lab_id" property="labId" />
+        <result column="schedule_time" property="scheduleTime" />
         <result column="created_by" property="createdBy" />
         <result column="is_deleted" property="isDeleted" />
         <result column="created_at" property="createdAt" />
@@ -40,8 +42,8 @@
     </select>
 
     <insert id="insertCourse" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO courses (name, class_name, student_count, term, created_by, is_deleted)
-        VALUES (#{name}, #{className}, #{studentCount}, #{term}, #{createdBy}, #{isDeleted})
+        INSERT INTO courses (name, class_name, student_count, term, lab_id, schedule_time, created_by, is_deleted)
+        VALUES (#{name}, #{className}, #{studentCount}, #{term}, #{labId}, #{scheduleTime}, #{createdBy}, #{isDeleted})
     </insert>
 
     <!-- 更新课程信息 -->
@@ -50,7 +52,9 @@
         SET name = #{name},
             class_name = #{className},
             student_count = #{studentCount},
-            term = #{term}
+            term = #{term},
+            lab_id = #{labId},
+            schedule_time = #{scheduleTime}
         WHERE id = #{id} AND is_deleted = 0
     </update>
 

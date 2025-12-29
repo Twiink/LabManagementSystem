@@ -127,6 +127,8 @@ public class CourseService {
         course.setClassName(request.getClassName());
         course.setStudentCount(request.getStudentCount());
         course.setTerm(request.getTerm());
+        course.setLabId(request.getLabId());
+        course.setScheduleTime(request.getScheduleTime());
         courseMapper.updateCourse(course);
 
         // 记录审计日志

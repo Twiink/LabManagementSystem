@@ -6,7 +6,7 @@
  * 权限: 部分接口需要 ADMIN 权限
  */
 
-import { get } from './request'
+import { get, put, post } from './request'
 import type { PageParams, PageData } from './request'
 import type { User, UserRole, UserStatus } from './types'
 
@@ -72,4 +72,38 @@ export function getUserList(params?: UserListParams) {
  */
 export function getStudentList(params?: Omit<UserListParams, 'role'>) {
   return get<PageData<User>>('/users/students', params)
+}
+
+/**
+ * 更新用户请求参数
+ */
+export interface UserUpdateParams {
+  name: string
+  email?: string
+  phone?: string
+  role: UserRole
+  status: UserStatus
+}
+
+/**
+ * 更新用户信息
+ *
+ * @description 更新指定用户的信息（仅管理员可用）
+ * @param id - 用户 ID
+ * @param params - 更新参数
+ * @returns 更新后的用户信息
+ */
+export function updateUser(id: number, params: UserUpdateParams) {
+  return put<User>(`/users/${id}`, params)
+}
+
+/**
+ * 重置用户密码
+ *
+ * @description 重置指定用户的密码为默认密码（仅管理员可用）
+ * @param id - 用户 ID
+ * @returns 操作结果
+ */
+export function resetPassword(id: number) {
+  return post<void>(`/users/${id}/reset-password`)
 }

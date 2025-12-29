@@ -4,34 +4,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="10ff7736-9c11-42b7-888f-c20082c8008d" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/ApifoxUploaderProjectSetting.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/UniappTool.xml" afterDir="false" />
+    <list default="true" id="5bcbd086-18c0-4c7e-a6ec-5e270ca75011" name="更改" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/ApifoxUploaderProjectSetting.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/UniappTool.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/common/error/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/common/error/GlobalExceptionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/CourseController.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/CourseController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/ReservationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/ReservationController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/domain/entity/Course.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/domain/entity/Course.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/request/CourseCreateRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/request/CourseCreateRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/request/ReservationSeriesRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/request/ReservationSeriesRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/response/CourseResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/response/CourseResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/response/ReservationSeriesResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/response/ReservationSeriesResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/mapper/CourseMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/mapper/CourseMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/request/CourseUpdateRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/request/CourseUpdateRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/request/LabUpdateRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/request/LabUpdateRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/mapper/UserMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/mapper/UserMapper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/CourseService.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/CourseService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/ReservationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/ReservationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/api/course.ts" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/api/course.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/api/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/api/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/LabService.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/LabService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/resources/mappers/CourseMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/resources/mappers/CourseMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/resources/mappers/UserMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/resources/mappers/UserMapper.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/api/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/api/user.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/layout/Layout.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/layout/Layout.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/router/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/router/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/admin/UserList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/admin/UserList.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/courses/CourseList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/courses/CourseList.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/devices/DeviceList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/devices/DeviceList.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/labs/LabList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/labs/LabList.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/reservations/ReservationList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/reservations/ReservationList.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,16 +36,14 @@
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
-        <option name="localRepository" value="D:\CompilingEnvironment\Maven" />
         <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
-        <option name="userSettingsFile" value="D:\CompilingEnvironment\apache-maven-3.9.9\conf\settings.xml" />
       </MavenGeneralSettings>
     </option>
   </component>
-  <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 4
-}</component>
-  <component name="ProjectId" id="37VYrhzp1XGYtLjyBccWJgMgY8g" />
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 4
+}]]></component>
+  <component name="ProjectId" id="37WboQvQXKjCdjfXjNSwVwO1Ofe" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -66,13 +56,14 @@
     "RequestMappingsPanelWidth0": "75",
     "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "Spring Boot.LabManagementSystemBackendApplication.executor": "Run",
     "git-widget-placeholder": "master",
     "kotlin-language-version-configured": "true",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "nodejs_package_manager_path": "npm",
+    "ts.external.directory.path": "/Users/mac/ProjectStation/LabManagementSystem/LabManagementSystemFrontend/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -96,12 +87,12 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="默认任务">
-      <changelist id="10ff7736-9c11-42b7-888f-c20082c8008d" name="更改" comment="" />
-      <created>1766989906079</created>
+      <changelist id="5bcbd086-18c0-4c7e-a6ec-5e270ca75011" name="更改" comment="" />
+      <created>1767021948374</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1766989906079</updated>
-      <workItem from="1766989907334" duration="10096000" />
+      <updated>1767021948374</updated>
+      <workItem from="1767021949580" duration="4519000" />
     </task>
     <servers />
   </component>

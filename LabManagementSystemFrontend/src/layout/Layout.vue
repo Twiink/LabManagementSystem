@@ -3,7 +3,7 @@
     <!-- Sidebar -->
     <div class="sidebar-container" :class="{ collapsed: isCollapse }">
       <div class="logo">
-        <el-icon :size="24" color="var(--primary-color)" style="margin-right: 10px"><ElementPlus /></el-icon>
+        <el-icon :size="24" color="var(--primary-color)" style="margin-right: 10px"><Cpu /></el-icon>
         <span v-if="!isCollapse">Lab System</span>
       </div>
       <el-menu

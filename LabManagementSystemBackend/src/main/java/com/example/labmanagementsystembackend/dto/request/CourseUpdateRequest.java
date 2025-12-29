@@ -19,6 +19,10 @@ public class CourseUpdateRequest {
     @NotBlank
     private String term;
 
+    private Long labId;
+
+    private String scheduleTime;
+
     public String getName() {
         return name;
     }
@@ -49,5 +53,21 @@ public class CourseUpdateRequest {
 
     public void setTerm(String term) {
         this.term = term;
+    }
+
+    public Long getLabId() {
+        return labId;
+    }
+
+    public void setLabId(Long labId) {
+        this.labId = labId;
+    }
+
+    public String getScheduleTime() {
+        return scheduleTime;
+    }
+
+    public void setScheduleTime(String scheduleTime) {
+        this.scheduleTime = scheduleTime;
     }
 }

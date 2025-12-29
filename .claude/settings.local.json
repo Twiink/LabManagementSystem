@@ -6,7 +6,8 @@
       "Bash(mvn:*)",
       "Bash(dir:*)",
       "Bash(findstr:*)",
-      "Bash(where:*)"
+      "Bash(where:*)",
+      "Bash(tree:*)"
     ]
   }
 }

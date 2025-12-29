@@ -22,4 +22,6 @@ public interface UserMapper {
                          @Param("pageSize") int pageSize);
 
     long countUsers(@Param("role") String role, @Param("status") String status);
+
+    int updateUser(User user);
 }

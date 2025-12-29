@@ -54,8 +54,13 @@ public class LabService {
         existing.setName(request.getName());
         existing.setLocation(request.getLocation());
         existing.setCapacity(request.getCapacity());
-        existing.setOpenTimeStart(request.getOpenTimeStart());
-        existing.setOpenTimeEnd(request.getOpenTimeEnd());
+        // 只在值不为 null 时更新开放时间
+        if (request.getOpenTimeStart() != null) {
+            existing.setOpenTimeStart(request.getOpenTimeStart());
+        }
+        if (request.getOpenTimeEnd() != null) {
+            existing.setOpenTimeEnd(request.getOpenTimeEnd());
+        }
         labMapper.updateLab(existing);
         return toResponse(labMapper.findById(id));
     }

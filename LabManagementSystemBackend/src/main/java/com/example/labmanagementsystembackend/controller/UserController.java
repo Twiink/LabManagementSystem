@@ -3,16 +3,15 @@ package com.example.labmanagementsystembackend.controller;
 import com.example.labmanagementsystembackend.common.api.ApiResponse;
 import com.example.labmanagementsystembackend.common.api.PageResponse;
 import com.example.labmanagementsystembackend.common.util.SecurityUtil;
+import com.example.labmanagementsystembackend.dto.request.UserUpdateRequest;
 import com.example.labmanagementsystembackend.dto.response.UserResponse;
 import com.example.labmanagementsystembackend.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -53,5 +52,21 @@ public class UserController extends BaseController {
         List<UserResponse> students = userService.listUsers("STUDENT", status, page, pageSize);
         long total = userService.countUsers("STUDENT", status);
         return success(request, new PageResponse<>(students, page, pageSize, total));
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<UserResponse> updateUser(@PathVariable Long id,
+                                                @Valid @RequestBody UserUpdateRequest body,
+                                                HttpServletRequest request) {
+        return success(request, userService.updateUser(id, body));
+    }
+
+    @PostMapping("/{id}/reset-password")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<Void> resetPassword(@PathVariable Long id,
+                                           HttpServletRequest request) {
+        userService.resetPassword(id);
+        return success(request, null);
     }
 }

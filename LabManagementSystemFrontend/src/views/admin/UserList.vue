@@ -20,7 +20,6 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleSearch">查询</el-button>
-          <el-button type="success" icon="Plus" @click="handleAdd">新增用户</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -44,8 +43,8 @@
         </el-table-column>
         <el-table-column label="操作" width="180" fixed="right" align="center">
           <template #default="scope">
-            <el-button type="primary" size="small" @click="handleEdit(scope.row)" icon="Edit">编辑</el-button>
-            <el-button type="warning" size="small" @click="handleResetPassword(scope.row)" icon="Lock">重置</el-button>
+            <el-button type="primary" size="small" @click="handleEdit(scope.row)">编辑</el-button>
+            <el-button type="warning" size="small" @click="handleResetPassword(scope.row)">重置</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -60,22 +59,65 @@
         />
       </div>
     </div>
+
+    <!-- 编辑用户弹窗 -->
+    <el-dialog v-model="dialogVisible" title="编辑用户" width="500px">
+      <el-form :model="form" label-width="80px">
+        <el-form-item label="姓名">
+          <el-input v-model="form.name" placeholder="请输入姓名" />
+        </el-form-item>
+        <el-form-item label="邮箱">
+          <el-input v-model="form.email" placeholder="请输入邮箱" />
+        </el-form-item>
+        <el-form-item label="电话">
+          <el-input v-model="form.phone" placeholder="请输入电话" />
+        </el-form-item>
+        <el-form-item label="角色">
+          <el-select v-model="form.role" placeholder="请选择角色" style="width: 100%">
+            <el-option label="管理员" value="ADMIN" />
+            <el-option label="教师" value="TEACHER" />
+            <el-option label="学生" value="STUDENT" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-select v-model="form.status" placeholder="请选择状态" style="width: 100%">
+            <el-option label="激活" value="ACTIVE" />
+            <el-option label="禁用" value="DISABLED" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" :loading="submitting" @click="handleSubmit">确定</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { getUserList } from '@/api/user'
-import { ElMessage } from 'element-plus'
+import { ref, reactive, onMounted } from 'vue'
+import { getUserList, updateUser, resetPassword } from '@/api/user'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 const searchQuery = ref('')
 const roleFilter = ref('')
 const statusFilter = ref('')
 const loading = ref(false)
+const submitting = ref(false)
 const tableData = ref<any[]>([])
 const total = ref(0)
 const currentPage = ref(1)
 const pageSize = ref(20)
+
+const dialogVisible = ref(false)
+const form = reactive({
+  id: 0,
+  name: '',
+  email: '',
+  phone: '',
+  role: 'STUDENT',
+  status: 'ACTIVE'
+})
 
 const loadData = async () => {
   loading.value = true
@@ -128,16 +170,60 @@ const handlePageChange = (page: number) => {
   loadData()
 }
 
-const handleAdd = () => {
-  ElMessage.info('新增用户功能待实现')
+const handleEdit = (row: any) => {
+  form.id = row.id
+  form.name = row.name
+  form.email = row.email || ''
+  form.phone = row.phone || ''
+  form.role = row.role
+  form.status = row.status
+  dialogVisible.value = true
 }
 
-const handleEdit = (row: any) => {
-  ElMessage.info(`编辑用户: ${row.name}`)
+const handleSubmit = async () => {
+  if (!form.name) {
+    ElMessage.warning('请输入姓名')
+    return
+  }
+
+  submitting.value = true
+  try {
+    await updateUser(form.id, {
+      name: form.name,
+      email: form.email || undefined,
+      phone: form.phone || undefined,
+      role: form.role as any,
+      status: form.status as any
+    })
+    ElMessage.success('更新成功')
+    dialogVisible.value = false
+    loadData()
+  } catch (error: any) {
+    console.error('更新失败:', error)
+    ElMessage.error(error.response?.data?.message || '更新失败')
+  } finally {
+    submitting.value = false
+  }
 }
 
 const handleResetPassword = (row: any) => {
-  ElMessage.info(`重置密码: ${row.name}`)
+  ElMessageBox.confirm(
+    `确定要重置用户 "${row.name}" 的密码吗？密码将被重置为：123456`,
+    '重置密码',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }
+  ).then(async () => {
+    try {
+      await resetPassword(row.id)
+      ElMessage.success('密码已重置为：123456')
+    } catch (error: any) {
+      console.error('重置密码失败:', error)
+      ElMessage.error(error.response?.data?.message || '重置密码失败')
+    }
+  })
 }
 
 const getRoleType = (role: string) => {
