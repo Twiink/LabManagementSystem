@@ -4,22 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3483be0a-be0b-47d0-8511-359ce038334f" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/common/util/TimeUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/common/util/TimeUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/ReservationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/ReservationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/domain/entity/Reservation.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/domain/entity/Reservation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/request/ReservationApprovalRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/request/ReservationApprovalRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/response/CalendarItemResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/response/CalendarItemResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/response/ReservationResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/response/ReservationResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/ReservationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/ReservationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/resources/mappers/ReservationMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/resources/mappers/ReservationMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/calendar/LabCalendar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/calendar/LabCalendar.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/dashboard/Dashboard.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/dashboard/Dashboard.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/devices/DeviceList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/devices/DeviceList.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/labs/LabList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/labs/LabList.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/reservations/ReservationList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/reservations/ReservationList.vue" afterDir="false" />
-    </list>
+    <list default="true" id="3483be0a-be0b-47d0-8511-359ce038334f" name="更改" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
