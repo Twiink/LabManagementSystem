@@ -5,10 +5,10 @@ import java.util.List;
 
 public class ReservationSeriesResponse {
     private Long seriesId;
-    private List<Long> created;
+    private List<ReservationResponse> created;
     private List<FailedSlot> failed;
 
-    public ReservationSeriesResponse(Long seriesId, List<Long> created, List<FailedSlot> failed) {
+    public ReservationSeriesResponse(Long seriesId, List<ReservationResponse> created, List<FailedSlot> failed) {
         this.seriesId = seriesId;
         this.created = created;
         this.failed = failed;
@@ -18,7 +18,7 @@ public class ReservationSeriesResponse {
         return seriesId;
     }
 
-    public List<Long> getCreated() {
+    public List<ReservationResponse> getCreated() {
         return created;
     }
 

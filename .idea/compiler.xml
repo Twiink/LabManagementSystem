@@ -7,7 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/springframework/boot/spring-boot-configuration-processor/3.4.1/spring-boot-configuration-processor-3.4.1.jar" />
+          <entry name="$PROJECT_DIR$/../../../CompilingEnvironment/Maven/org/springframework/boot/spring-boot-configuration-processor/3.4.1/spring-boot-configuration-processor-3.4.1.jar" />
         </processorPath>
         <module name="LabManagementSystemBackend" />
       </profile>

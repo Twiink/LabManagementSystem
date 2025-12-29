@@ -101,27 +101,7 @@ public class ReservationService {
 
     @Transactional
     public ReservationCreateResponse createReservation(Long requesterId, ReservationCreateRequest request) {
-        LocalDateTime startTime = TimeUtil.toUtcLocalDateTime(request.getStartTime());
-        LocalDateTime endTime = TimeUtil.toUtcLocalDateTime(request.getEndTime());
-        validateTimeRange(startTime, endTime);
-        Lab lab = validateLab(request.getLabId());
-        Device device = validateDevice(request.getDeviceId());
-        validateOpenTime(lab, startTime, endTime);
-        ensureNoConflicts(request.getLabId(), request.getDeviceId(), startTime, endTime, null);
-
-        Reservation reservation = new Reservation();
-        reservation.setRequesterId(requesterId);
-        reservation.setLabId(request.getLabId());
-        reservation.setDeviceId(request.getDeviceId());
-        reservation.setTitle(request.getTitle());
-        reservation.setStartTime(startTime);
-        reservation.setEndTime(endTime);
-        reservation.setType("SINGLE");
-        reservation.setPriority("NORMAL");
-        // 所有预约都需要审批
-        reservation.setStatus("PENDING");
-        reservationMapper.insertReservation(reservation);
-
+        Reservation reservation = createReservationWithType(requesterId, request, "SINGLE", "NORMAL");
         auditLogService.record(requesterId, "RESERVATION_CREATE", "RESERVATION", reservation.getId(), null);
         notificationService.notifyUser(requesterId, "RESERVATION", "Reservation submitted, status: " + reservation.getStatus());
         return new ReservationCreateResponse(reservation.getId(), reservation.getStatus());
@@ -137,7 +117,7 @@ public class ReservationService {
         series.setMode(request.getRule().getMode());
         reservationSeriesMapper.insertSeries(series);
 
-        List<Long> created = new ArrayList<>();
+        List<ReservationResponse> created = new ArrayList<>();
         List<ReservationSeriesResponse.FailedSlot> failed = new ArrayList<>();
 
         for (TimeSlot slot : slots) {
@@ -145,14 +125,18 @@ public class ReservationService {
                 ReservationCreateRequest createRequest = new ReservationCreateRequest();
                 createRequest.setLabId(request.getLabId());
                 createRequest.setDeviceId(request.getDeviceId());
+                createRequest.setTitle(request.getTitle());
                 createRequest.setStartTime(slot.startTime);
                 createRequest.setEndTime(slot.endTime);
-                ReservationCreateResponse response = createReservation(requesterId, createRequest);
-                created.add(response.getReservationId());
+                Reservation reservationEntity = createReservationWithType(requesterId, createRequest, "RECURRING", "NORMAL");
+                auditLogService.record(requesterId, "RESERVATION_CREATE", "RESERVATION", reservationEntity.getId(), null);
+                notificationService.notifyUser(requesterId, "RESERVATION", "Reservation submitted, status: " + reservationEntity.getStatus());
+                ReservationResponse reservation = getReservation(reservationEntity.getId());
+                created.add(reservation);
                 ReservationSeriesItem item = new ReservationSeriesItem();
                 item.setSeriesId(series.getId());
-                item.setReservationId(response.getReservationId());
-                item.setStatus(response.getStatus());
+                item.setReservationId(reservationEntity.getId());
+                item.setStatus(reservationEntity.getStatus());
                 reservationSeriesItemMapper.insertItem(item);
             } catch (BusinessException ex) {
                 failed.add(new ReservationSeriesResponse.FailedSlot(slot.startTime, slot.endTime, ex.getMessage()));
@@ -457,6 +441,30 @@ public class ReservationService {
             throw new BusinessException(ErrorCode.PERMISSION_DENIED,
                 "Only reservation owner or admin can " + operation);
         }
+    }
+
+    private Reservation createReservationWithType(Long requesterId, ReservationCreateRequest request, String type, String priority) {
+        LocalDateTime startTime = TimeUtil.toUtcLocalDateTime(request.getStartTime());
+        LocalDateTime endTime = TimeUtil.toUtcLocalDateTime(request.getEndTime());
+        validateTimeRange(startTime, endTime);
+        Lab lab = validateLab(request.getLabId());
+        validateDevice(request.getDeviceId());
+        validateOpenTime(lab, startTime, endTime);
+        ensureNoConflicts(request.getLabId(), request.getDeviceId(), startTime, endTime, null);
+
+        Reservation reservation = new Reservation();
+        reservation.setRequesterId(requesterId);
+        reservation.setLabId(request.getLabId());
+        reservation.setDeviceId(request.getDeviceId());
+        reservation.setTitle(request.getTitle());
+        reservation.setStartTime(startTime);
+        reservation.setEndTime(endTime);
+        reservation.setType(type);
+        reservation.setPriority(priority);
+        // 所有预约都需要审批
+        reservation.setStatus("PENDING");
+        reservationMapper.insertReservation(reservation);
+        return reservation;
     }
 
     private List<TimeSlot> generateSlots(ReservationSeriesRequest request) {

@@ -476,6 +476,7 @@ const handleReserveSubmit = async () => {
       const res = await createSeriesReservation({
         labId: reserveForm.labId,
         deviceId: reserveForm.deviceId,
+        title: reserveForm.title,
         rule: {
           type: batchForm.ruleType,
           value: ruleValue,

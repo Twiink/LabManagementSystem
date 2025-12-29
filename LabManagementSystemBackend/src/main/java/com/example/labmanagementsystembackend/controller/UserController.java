@@ -43,4 +43,15 @@ public class UserController extends BaseController {
         long total = userService.countUsers(role, status);
         return success(request, new PageResponse<>(users, page, pageSize, total));
     }
+
+    @GetMapping("/students")
+    @PreAuthorize("hasAnyRole('TEACHER','ADMIN')")
+    public ApiResponse<PageResponse<UserResponse>> listStudents(@RequestParam(required = false) String status,
+                                                                @RequestParam(defaultValue = "1") int page,
+                                                                @RequestParam(defaultValue = "100") int pageSize,
+                                                                HttpServletRequest request) {
+        List<UserResponse> students = userService.listUsers("STUDENT", status, page, pageSize);
+        long total = userService.countUsers("STUDENT", status);
+        return success(request, new PageResponse<>(students, page, pageSize, total));
+    }
 }

@@ -168,9 +168,11 @@ export interface Course {
  */
 export interface CreateCourseParams {
   name: string
-  className: string
-  studentCount: number
+  className?: string
+  studentIds: number[]
   term: string
+  labId?: number
+  scheduleTime?: string
 }
 
 /**
@@ -178,8 +180,8 @@ export interface CreateCourseParams {
  */
 export interface UpdateCourseParams {
   name: string
-  className: string
-  studentCount: number
+  className?: string
+  studentCount?: number
   term: string
 }
 
@@ -250,6 +252,7 @@ export interface SeriesRule {
 export interface CreateSeriesReservationParams {
   labId: number
   deviceId?: number
+  title?: string
   rule: SeriesRule
   time: {
     startTime: string

@@ -55,3 +55,21 @@ export function getCurrentUser() {
 export function getUserList(params?: UserListParams) {
   return get<PageData<User>>('/users', params)
 }
+
+/**
+ * 获取学生列表
+ *
+ * @description 获取所有学生用户（教师和管理员可用）
+ * @param params - 查询参数
+ * @returns 分页学生列表
+ *
+ * @example
+ * ```ts
+ * // 获取所有激活状态的学生
+ * const res = await getStudentList({ status: 'ACTIVE', page: 1, pageSize: 100 })
+ * console.log(res.data.items)
+ * ```
+ */
+export function getStudentList(params?: Omit<UserListParams, 'role'>) {
+  return get<PageData<User>>('/users/students', params)
+}

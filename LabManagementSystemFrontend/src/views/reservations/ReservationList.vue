@@ -535,6 +535,7 @@ const handleSubmit = async () => {
       await createSeriesReservation({
         labId: resourceType.value === 'LAB' ? form.resourceId! : 0,
         deviceId: resourceType.value === 'DEVICE' ? form.resourceId! : undefined,
+        title: form.title,
         rule: {
           type: batchForm.ruleType,
           value: ruleValue,
@@ -647,7 +648,8 @@ const getTypeLabel = (type: string) => {
   const map: Record<string, string> = {
     SINGLE: '单次',
     COURSE: '课程',
-    SERIES: '系列'
+    RECURRING: '批量',
+    SERIES: '批量'
   }
   return map[type] || type
 }

@@ -53,18 +53,19 @@
 
       <!-- 教师/管理员视图：表格样式 -->
       <template v-else>
-        <el-table :data="tableData" style="width: 100%" v-loading="loading">
-          <el-table-column prop="name" label="课程名称" />
-          <el-table-column prop="className" label="班级" />
-          <el-table-column prop="studentCount" label="人数" width="80" />
-          <el-table-column prop="teacherName" label="授课教师" width="120" />
-          <el-table-column prop="labName" label="实验室" width="150" />
-          <el-table-column prop="term" label="学期" width="120" />
-          <el-table-column label="操作" width="250">
+        <el-table :data="tableData" style="width: 100%" v-loading="loading" class="course-table">
+          <el-table-column prop="name" label="课程名称" min-width="150" />
+          <el-table-column prop="className" label="班级" min-width="120" />
+          <el-table-column prop="studentCount" label="人数" width="80" align="center" />
+          <el-table-column prop="teacherName" label="授课教师" min-width="100" />
+          <el-table-column prop="labName" label="实验室" min-width="120" />
+          <el-table-column prop="scheduleTime" label="上课时间" min-width="130" />
+          <el-table-column prop="term" label="学期" width="120" align="center" />
+          <el-table-column label="操作" width="240" fixed="right" align="center">
             <template #default="scope">
-              <el-button link type="primary" size="small" @click="handleEdit(scope.row)">编辑</el-button>
-              <el-button link type="danger" size="small" @click="handleDelete(scope.row.id)">删除</el-button>
-              <el-button link type="success" size="small" @click="handleBindReservation(scope.row)">绑定预约</el-button>
+              <el-button type="primary" size="small" @click="handleEdit(scope.row)" icon="Edit">编辑</el-button>
+              <el-button type="danger" size="small" @click="handleDelete(scope.row.id)" icon="Delete">删除</el-button>
+              <el-button type="success" size="small" @click="handleBindReservation(scope.row)" icon="Link">绑定</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -87,11 +88,27 @@
         <el-form-item label="课程名称">
           <el-input v-model="form.name" placeholder="请输入课程名称" />
         </el-form-item>
-        <el-form-item label="班级">
-          <el-input v-model="form.className" placeholder="请输入班级，如：化学2023-1班" />
+        <el-form-item label="选择学生">
+          <el-select
+            v-model="form.studentIds"
+            multiple
+            filterable
+            placeholder="请选择学生（可多选）"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="student in students"
+              :key="student.id"
+              :label="`${student.name} (${student.email || student.phone || ''})`"
+              :value="student.id"
+            />
+          </el-select>
+          <div style="margin-top: 5px; font-size: 12px; color: #909399">
+            已选择 {{ form.studentIds.length }} 名学生
+          </div>
         </el-form-item>
-        <el-form-item label="学生人数">
-          <el-input-number v-model="form.studentCount" :min="1" :max="200" />
+        <el-form-item label="班级">
+          <el-input v-model="form.className" placeholder="选填，如：化学2023-1班" />
         </el-form-item>
         <el-form-item label="授课教师" v-if="userStore.isAdmin">
           <el-input v-model="form.teacherName" placeholder="请输入授课教师" />
@@ -157,6 +174,8 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '@/store/user'
 import { getLabList } from '@/api/lab'
+import { getStudentList } from '@/api/user'
+import { createCourse, updateCourse, getCourseList, deleteCourse as deleteCourseApi } from '@/api/course'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const route = useRoute()
@@ -183,6 +202,8 @@ const pageSize = ref(20)
 
 // 实验室列表
 const labs = ref<any[]>([])
+// 学生列表
+const students = ref<any[]>([])
 
 const dialogVisible = ref(false)
 const dialogType = ref<'add' | 'edit'>('add')
@@ -190,7 +211,7 @@ const form = reactive({
   id: 0,
   name: '',
   className: '',
-  studentCount: 30,
+  studentIds: [] as number[],
   teacherName: '',
   term: '2024-2025-2',
   scheduleTime: '',
@@ -217,69 +238,67 @@ const loadLabs = async () => {
   }
 }
 
-// 加载课程数据（模拟数据）
+// 加载学生列表
+const loadStudents = async () => {
+  try {
+    const res = await getStudentList({ status: 'ACTIVE', page: 1, pageSize: 500 })
+    students.value = res.data.items || []
+  } catch (error) {
+    console.error('加载学生列表失败:', error)
+  }
+}
+
+// 加载课程数据
 const loadData = async () => {
   loading.value = true
   try {
-    // TODO: 替换为真实 API 调用
-    await new Promise(resolve => setTimeout(resolve, 300))
-
-    const mockData = [
-      {
-        id: 1,
-        name: '分析化学实验',
-        className: '化学2023-1班',
-        studentCount: 45,
-        teacherName: '张老师',
-        labName: '化学实验室A',
-        labId: 1,
-        term: '2024-2025-2',
-        scheduleTime: '周一 8:00-10:00'
-      },
-      {
-        id: 2,
-        name: '有机化学实验',
-        className: '化学2023-2班',
-        studentCount: 42,
-        teacherName: '李老师',
-        labName: '化学实验室B',
-        labId: 2,
-        term: '2024-2025-2',
-        scheduleTime: '周三 14:00-16:00'
-      },
-      {
-        id: 3,
-        name: '物理化学实验',
-        className: '化学2023-1班',
-        studentCount: 45,
-        teacherName: '王老师',
-        labName: '物理化学实验室',
-        labId: 3,
-        term: '2024-2025-2',
-        scheduleTime: '周五 10:00-12:00'
-      }
-    ]
-
-    // 根据搜索条件过滤
-    let filtered = mockData
-    if (searchQuery.value) {
-      filtered = filtered.filter(c => c.name.includes(searchQuery.value))
+    const params: any = {
+      page: currentPage.value,
+      pageSize: pageSize.value
     }
+
+    // 如果有搜索条件
     if (termFilter.value) {
-      filtered = filtered.filter(c => c.term === termFilter.value)
+      params.term = termFilter.value
     }
 
-    tableData.value = filtered
-    total.value = filtered.length
+    // 学生查看自己选修的课程
+    if (userStore.isStudent) {
+      params.studentId = userStore.userInfo?.id
+    }
+    // 教师查看自己创建的课程
+    else if (userStore.isTeacher) {
+      params.createdBy = userStore.userInfo?.id
+    }
+    // 管理员可以看所有课程
+
+    const res = await getCourseList(params)
+    tableData.value = res.data.items || []
+    total.value = res.data.total || 0
+
+    // 如果有搜索关键词，在前端进行过滤（因为后端可能不支持name搜索）
+    if (searchQuery.value) {
+      tableData.value = tableData.value.filter(c => c.name.includes(searchQuery.value))
+      total.value = tableData.value.length
+    }
   } catch (error) {
     console.error('加载课程列表失败:', error)
+    ElMessage.error('加载课程列表失败')
   } finally {
     loading.value = false
   }
 }
 
 onMounted(async () => {
+  // 加载实验室列表
   await loadLabs()
+
+  // 只有教师和管理员才需要加载学生列表（用于创建课程）
+  if (canManage.value) {
+    await loadStudents()
+  }
+
+  // 加载课程数据
   loadData()
 })
 
@@ -298,7 +317,7 @@ const handleAdd = () => {
   form.id = 0
   form.name = ''
   form.className = ''
-  form.studentCount = 30
+  form.studentIds = []
   form.teacherName = userStore.isTeacher ? (userStore.userInfo?.name || '') : ''
   form.term = '2024-2025-2'
   form.scheduleTime = ''
@@ -310,46 +329,66 @@ const handleEdit = (row: any) => {
   dialogType.value = 'edit'
   form.id = row.id
   form.name = row.name
-  form.className = row.className
-  form.studentCount = row.studentCount
-  form.teacherName = row.teacherName
+  form.className = row.className || ''
+  form.studentIds = row.studentIds || []
+  form.teacherName = row.teacherName || ''
   form.term = row.term
-  form.scheduleTime = row.scheduleTime
-  form.labId = row.labId
+  form.scheduleTime = row.scheduleTime || ''
+  form.labId = row.labId || null
   dialogVisible.value = true
 }
 
-const handleDelete = (_id: number) => {
+const handleDelete = (id: number) => {
   ElMessageBox.confirm('确定要删除该课程吗？', '警告', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
   }).then(async () => {
     try {
-      // TODO: 调用删除 API
+      await deleteCourseApi(id)
       ElMessage.success('删除成功')
       loadData()
-    } catch (error) {
+    } catch (error: any) {
       console.error('删除失败:', error)
+      ElMessage.error(error.response?.data?.message || '删除失败')
     }
   })
 }
 
 const handleSubmit = async () => {
-  if (!form.name || !form.className) {
-    ElMessage.warning('请填写完整信息')
+  if (!form.name || form.studentIds.length === 0) {
+    ElMessage.warning('请填写课程名称并选择至少一个学生')
     return
   }
 
   submitting.value = true
   try {
-    // TODO: 调用新增/编辑 API
-    await new Promise(resolve => setTimeout(resolve, 300))
-    ElMessage.success(dialogType.value === 'add' ? '新增成功' : '更新成功')
+    if (dialogType.value === 'add') {
+      // 创建课程
+      await createCourse({
+        name: form.name,
+        className: form.className || undefined,
+        studentIds: form.studentIds,
+        term: form.term,
+        labId: form.labId || undefined,
+        scheduleTime: form.scheduleTime || undefined
+      })
+      ElMessage.success('新增成功')
+    } else {
+      // 更新课程
+      await updateCourse(form.id, {
+        name: form.name,
+        className: form.className || undefined,
+        studentCount: form.studentIds.length,
+        term: form.term
+      })
+      ElMessage.success('更新成功')
+    }
     dialogVisible.value = false
     loadData()
-  } catch (error) {
+  } catch (error: any) {
     console.error('提交失败:', error)
+    ElMessage.error(error.response?.data?.message || '操作失败')
   } finally {
     submitting.value = false
   }
@@ -393,6 +432,35 @@ const handleBindSubmit = async () => {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
+}
+
+// 课程表格样式优化
+.course-table {
+  font-size: 14px;
+
+  :deep(.el-table__header) {
+    th {
+      font-size: 15px;
+      font-weight: 600;
+      background-color: #f5f7fa;
+    }
+  }
+
+  :deep(.el-table__body) {
+    td {
+      font-size: 14px;
+      padding: 12px 0;
+    }
+  }
+
+  :deep(.el-button) {
+    margin: 0 2px;
+    font-size: 13px;
+
+    &.el-button--small {
+      padding: 7px 12px;
+    }
+  }
 }
 
 // 学生课程表卡片样式

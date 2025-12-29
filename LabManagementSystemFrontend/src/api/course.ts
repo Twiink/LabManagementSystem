@@ -16,7 +16,8 @@ import type { Course, CreateCourseParams, UpdateCourseParams } from './types'
  * 课程列表查询参数
  */
 export interface CourseListParams extends PageParams {
-  createdBy?: number  // 按创建人筛选
+  createdBy?: number  // 按创建人筛选（教师查看自己创建的课程）
+  studentId?: number  // 按学生ID筛选（学生查看自己选修的课程）
   term?: string       // 按学期筛选，如 "2024-2025-2"
 }
 

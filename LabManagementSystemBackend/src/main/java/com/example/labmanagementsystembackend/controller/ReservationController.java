@@ -56,7 +56,7 @@ public class ReservationController extends BaseController {
     }
 
     @PostMapping("/series")
-    @PreAuthorize("hasAnyRole('TEACHER','ADMIN')")
+    @PreAuthorize("hasAnyRole('TEACHER','STUDENT','ADMIN')")
     public ApiResponse<ReservationSeriesResponse> createSeries(@AuthenticationPrincipal Jwt jwt,
                                                                @Valid @RequestBody ReservationSeriesRequest body,
                                                                HttpServletRequest request) {

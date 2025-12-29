@@ -34,15 +34,31 @@ public class CourseController extends BaseController {
 
     /**
      * 获取课程列表
+     *
+     * @param createdBy 按创建人筛选（教师查看自己创建的课程）
+     * @param studentId 按学生ID筛选（学生查看自己选修的课程）
+     * @param term 按学期筛选
      */
     @GetMapping
     public ApiResponse<PageResponse<CourseResponse>> listCourses(@RequestParam(required = false) Long createdBy,
+                                                                 @RequestParam(required = false) Long studentId,
                                                                  @RequestParam(required = false) String term,
                                                                  @RequestParam(defaultValue = "1") int page,
                                                                  @RequestParam(defaultValue = "20") int pageSize,
                                                                  HttpServletRequest request) {
-        List<CourseResponse> courses = courseService.listCourses(createdBy, term, page, pageSize);
-        long total = courseService.countCourses(createdBy, term);
+        List<CourseResponse> courses;
+        long total;
+
+        if (studentId != null) {
+            // 查询学生选修的课程
+            courses = courseService.listCoursesByStudentId(studentId, term, page, pageSize);
+            total = courseService.countCoursesByStudentId(studentId, term);
+        } else {
+            // 查询教师创建的课程或所有课程
+            courses = courseService.listCourses(createdBy, term, page, pageSize);
+            total = courseService.countCourses(createdBy, term);
+        }
+
         return success(request, new PageResponse<>(courses, page, pageSize, total));
     }
 

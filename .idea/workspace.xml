@@ -4,7 +4,35 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3483be0a-be0b-47d0-8511-359ce038334f" name="更改" comment="" />
+    <list default="true" id="10ff7736-9c11-42b7-888f-c20082c8008d" name="更改" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/ApifoxUploaderProjectSetting.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/UniappTool.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/common/error/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/common/error/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/CourseController.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/CourseController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/ReservationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/ReservationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/domain/entity/Course.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/domain/entity/Course.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/request/CourseCreateRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/request/CourseCreateRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/request/ReservationSeriesRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/request/ReservationSeriesRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/response/CourseResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/response/CourseResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/response/ReservationSeriesResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/response/ReservationSeriesResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/mapper/CourseMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/mapper/CourseMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/CourseService.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/CourseService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/ReservationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/ReservationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/api/course.ts" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/api/course.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/api/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/api/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/api/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/api/user.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/admin/UserList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/admin/UserList.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/courses/CourseList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/courses/CourseList.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/devices/DeviceList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/devices/DeviceList.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/labs/LabList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/labs/LabList.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/reservations/ReservationList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/reservations/ReservationList.vue" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -16,40 +44,38 @@
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
+        <option name="localRepository" value="D:\CompilingEnvironment\Maven" />
         <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+        <option name="userSettingsFile" value="D:\CompilingEnvironment\apache-maven-3.9.9\conf\settings.xml" />
       </MavenGeneralSettings>
     </option>
   </component>
   <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 5
+  &quot;associatedIndex&quot;: 4
 }</component>
-  <component name="ProjectId" id="37O8jeJXxHFHt1HpBnBZBqrCEDl" />
+  <component name="ProjectId" id="37VYrhzp1XGYtLjyBccWJgMgY8g" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Spring Boot.LabManagementSystemBackendApplication.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/mac/ProjectStation/LabManagementSystem&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;/Users/mac/ProjectStation/LabManagementSystem/LabManagementSystemFrontend/node_modules/typescript/lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Spring Boot.LabManagementSystemBackendApplication.executor": "Run",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="LabManagementSystemBackendApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
@@ -70,12 +96,12 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="默认任务">
-      <changelist id="3483be0a-be0b-47d0-8511-359ce038334f" name="更改" comment="" />
-      <created>1766762894696</created>
+      <changelist id="10ff7736-9c11-42b7-888f-c20082c8008d" name="更改" comment="" />
+      <created>1766989906079</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1766762894696</updated>
-      <workItem from="1766762897753" duration="15116000" />
+      <updated>1766989906079</updated>
+      <workItem from="1766989907334" duration="10096000" />
     </task>
     <servers />
   </component>

@@ -18,12 +18,16 @@ public class Course {
     private Long id;
     @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "class_name", nullable = false)
+    @Column(name = "class_name")
     private String className;
-    @Column(name = "student_count", nullable = false)
+    @Column(name = "student_count")
     private Integer studentCount;
     @Column(name = "term", nullable = false)
     private String term;
+    @Column(name = "lab_id")
+    private Long labId;
+    @Column(name = "schedule_time")
+    private String scheduleTime;
     @Column(name = "created_by", nullable = false)
     private Long createdBy;
     @Column(name = "is_deleted", nullable = false, columnDefinition = "TINYINT DEFAULT 0")
@@ -71,6 +75,22 @@ public class Course {
 
     public void setTerm(String term) {
         this.term = term;
+    }
+
+    public Long getLabId() {
+        return labId;
+    }
+
+    public void setLabId(Long labId) {
+        this.labId = labId;
+    }
+
+    public String getScheduleTime() {
+        return scheduleTime;
+    }
+
+    public void setScheduleTime(String scheduleTime) {
+        this.scheduleTime = scheduleTime;
     }
 
     public Long getCreatedBy() {

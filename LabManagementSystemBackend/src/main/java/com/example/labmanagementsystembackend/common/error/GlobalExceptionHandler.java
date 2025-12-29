@@ -25,6 +25,20 @@ public class GlobalExceptionHandler {
         return ResponseEntity.ok(ApiResponse.failure(code.getCode(), ex.getMessage(), ex.getData(), requestId(request)));
     }
 
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<Object>> handleAccessDenied(
+            org.springframework.security.access.AccessDeniedException ex,
+            HttpServletRequest request) {
+        log.warn("Access denied: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                ApiResponse.failure(
+                        ErrorCode.PERMISSION_DENIED.getCode(),
+                        ErrorCode.PERMISSION_DENIED.getMessage(),
+                        ex.getMessage(),
+                        requestId(request))
+        );
+    }
+
     @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class, ConstraintViolationException.class})
     public ResponseEntity<ApiResponse<Object>> handleValidation(Exception ex, HttpServletRequest request) {
         return ResponseEntity.ok(ApiResponse.failure(

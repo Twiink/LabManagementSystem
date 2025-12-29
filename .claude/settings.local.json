@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mvn clean:*)",
+      "Bash(mvn install:*)",
+      "Bash(mvn:*)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)",
+      "Bash(where:*)"
+    ]
+  }
+}
