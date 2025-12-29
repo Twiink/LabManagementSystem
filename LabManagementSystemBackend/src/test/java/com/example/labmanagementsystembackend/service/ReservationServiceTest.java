@@ -140,7 +140,8 @@ class ReservationServiceTest {
 
             ReservationCreateResponse response = reservationService.createReservation(2L, request);
             assertNotNull(response);
-            assertEquals("APPROVED", response.getStatus());
+            // 所有预约现在都需要审批，状态为 PENDING
+            assertEquals("PENDING", response.getStatus());
         }
 
         @Test
@@ -253,8 +254,13 @@ class ReservationServiceTest {
             Lab lab = buildLab("IDLE", "08:00:00", "22:00:00");
             when(labService.getLabEntity(1L)).thenReturn(lab);
 
-            // 预约时间: 7:00-8:00，早于开放时间
-            ReservationCreateRequest request = buildRequest(1L, null, 7, 0, 8, 0);
+            // 使用中国时区 (Asia/Shanghai +8)，本地时间 7:00-8:00 早于开放时间 08:00
+            // UTC 时间为前一天 23:00 到当天 00:00
+            ReservationCreateRequest request = new ReservationCreateRequest();
+            request.setLabId(1L);
+            request.setDeviceId(null);
+            request.setStartTime(OffsetDateTime.of(2025, 1, 15, 7, 0, 0, 0, ZoneOffset.ofHours(8)));
+            request.setEndTime(OffsetDateTime.of(2025, 1, 15, 8, 0, 0, 0, ZoneOffset.ofHours(8)));
 
             BusinessException ex = assertThrows(BusinessException.class,
                     () -> reservationService.createReservation(2L, request));
