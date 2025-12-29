@@ -5,25 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5bcbd086-18c0-4c7e-a6ec-5e270ca75011" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/ApifoxUploaderProjectSetting.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/UniappTool.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/request/CourseUpdateRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/request/CourseUpdateRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/request/LabUpdateRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/dto/request/LabUpdateRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/mapper/UserMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/mapper/UserMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/CourseService.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/CourseService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/LabService.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/LabService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/java/com/example/labmanagementsystembackend/service/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/resources/mappers/CourseMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/resources/mappers/CourseMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/resources/mappers/UserMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemBackend/src/main/resources/mappers/UserMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/api/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/api/user.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/layout/Layout.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/layout/Layout.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/router/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/router/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/admin/UserList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/admin/UserList.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/courses/CourseList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/LabManagementSystemFrontend/src/views/courses/CourseList.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.claude/settings.local.json" beforeDir="false" afterPath="$PROJECT_DIR$/.claude/settings.local.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/LabManagementSystem.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,7 +82,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1767021948374</updated>
-      <workItem from="1767021949580" duration="4519000" />
+      <workItem from="1767021949580" duration="4860000" />
     </task>
     <servers />
   </component>
