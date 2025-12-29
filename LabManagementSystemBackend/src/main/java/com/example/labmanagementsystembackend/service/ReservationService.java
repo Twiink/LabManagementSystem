@@ -340,11 +340,14 @@ public class ReservationService {
         return reservationMapper.findCalendar(labId, deviceId, fromTime, toTime)
                 .stream()
                 .map(reservation -> new CalendarItemResponse(reservation.getId(),
-                        reservation.getType(),
+                        reservation.getTitle(),
                         TimeUtil.fromUtcLocalDateTime(reservation.getStartTime()),
                         TimeUtil.fromUtcLocalDateTime(reservation.getEndTime()),
                         reservation.getStatus(),
-                        reservation.getType()))
+                        reservation.getType(),
+                        reservation.getLabId(),
+                        reservation.getDeviceId(),
+                        reservation.getRequesterName()))
                 .collect(Collectors.toList());
     }
 
@@ -383,8 +386,11 @@ public class ReservationService {
 
     private void validateOpenTime(Lab lab, LocalDateTime startTime, LocalDateTime endTime) {
         if (lab.getOpenTimeStart() != null && lab.getOpenTimeEnd() != null) {
-            if (startTime.toLocalTime().isBefore(lab.getOpenTimeStart())
-                    || endTime.toLocalTime().isAfter(lab.getOpenTimeEnd())) {
+            // 将 UTC 时间转换为本地时间再与实验室开放时间比较
+            java.time.LocalTime localStartTime = TimeUtil.toLocalTime(startTime);
+            java.time.LocalTime localEndTime = TimeUtil.toLocalTime(endTime);
+            if (localStartTime.isBefore(lab.getOpenTimeStart())
+                    || localEndTime.isAfter(lab.getOpenTimeEnd())) {
                 throw new BusinessException(ErrorCode.RESERVATION_WINDOW_INVALID, "Outside lab open hours");
             }
         }
@@ -548,8 +554,8 @@ public class ReservationService {
     }
 
     private static ReservationResponse toResponse(Reservation reservation) {
-        return new ReservationResponse(reservation.getId(), reservation.getRequesterId(), reservation.getLabId(),
-                reservation.getDeviceId(), reservation.getCourseId(), reservation.getTitle(),
+        return new ReservationResponse(reservation.getId(), reservation.getRequesterId(), reservation.getRequesterName(),
+                reservation.getLabId(), reservation.getDeviceId(), reservation.getCourseId(), reservation.getTitle(),
                 TimeUtil.fromUtcLocalDateTime(reservation.getStartTime()),
                 TimeUtil.fromUtcLocalDateTime(reservation.getEndTime()),
                 reservation.getStatus(), reservation.getType(), reservation.getPriority());

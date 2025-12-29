@@ -90,7 +90,7 @@
     </el-dialog>
 
     <!-- 预约弹窗 (学生/教师使用) -->
-    <el-dialog v-model="reserveDialogVisible" title="实验室预约" width="500px">
+    <el-dialog v-model="reserveDialogVisible" title="实验室预约" width="650px">
       <el-form :model="reserveForm" label-width="100px">
         <el-form-item label="实验室">
           <el-input :value="reserveForm.labName" disabled />
@@ -98,16 +98,89 @@
         <el-form-item label="预约事项">
           <el-input v-model="reserveForm.title" placeholder="请输入预约事项，如：分析化学实验" />
         </el-form-item>
-        <el-form-item label="时间段">
-          <el-date-picker
-            v-model="reserveForm.timeRange"
-            type="datetimerange"
-            range-separator="至"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-            style="width: 100%"
-          />
+        <el-form-item label="预约模式">
+          <el-radio-group v-model="reserveForm.mode">
+            <el-radio label="SINGLE">单次预约</el-radio>
+            <el-radio label="BATCH">批量预约</el-radio>
+          </el-radio-group>
         </el-form-item>
+
+        <!-- 单次预约 -->
+        <template v-if="reserveForm.mode === 'SINGLE'">
+          <el-form-item label="时间段">
+            <el-date-picker
+              v-model="reserveForm.timeRange"
+              type="datetimerange"
+              range-separator="至"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
+              style="width: 100%"
+            />
+          </el-form-item>
+        </template>
+
+        <!-- 批量预约 -->
+        <template v-else>
+          <el-form-item label="重复方式">
+            <el-radio-group v-model="batchForm.ruleType">
+              <el-radio label="DAILY">每天</el-radio>
+              <el-radio label="WEEKLY">每周</el-radio>
+              <el-radio label="CUSTOM">自定义日期</el-radio>
+            </el-radio-group>
+          </el-form-item>
+
+          <!-- 每天重复 -->
+          <template v-if="batchForm.ruleType === 'DAILY'">
+            <el-form-item label="起始日期">
+              <el-date-picker v-model="batchForm.startDate" type="date" placeholder="选择起始日期" style="width: 100%" />
+            </el-form-item>
+            <el-form-item label="时间段">
+              <el-time-picker v-model="batchForm.timeSlot" is-range range-separator="至" start-placeholder="开始" end-placeholder="结束" format="HH:mm" style="width: 100%" />
+            </el-form-item>
+            <el-form-item label="连续天数">
+              <el-input-number v-model="batchForm.count" :min="1" :max="30" />
+            </el-form-item>
+            <el-form-item label="间隔天数">
+              <el-input-number v-model="batchForm.interval" :min="1" :max="7" />
+              <span style="margin-left: 10px; color: #909399">（每隔几天预约一次）</span>
+            </el-form-item>
+          </template>
+
+          <!-- 每周重复 -->
+          <template v-if="batchForm.ruleType === 'WEEKLY'">
+            <el-form-item label="起始日期">
+              <el-date-picker v-model="batchForm.startDate" type="date" placeholder="选择起始日期" style="width: 100%" />
+            </el-form-item>
+            <el-form-item label="时间段">
+              <el-time-picker v-model="batchForm.timeSlot" is-range range-separator="至" start-placeholder="开始" end-placeholder="结束" format="HH:mm" style="width: 100%" />
+            </el-form-item>
+            <el-form-item label="选择周几">
+              <el-checkbox-group v-model="batchForm.daysOfWeek">
+                <el-checkbox :label="1">周一</el-checkbox>
+                <el-checkbox :label="2">周二</el-checkbox>
+                <el-checkbox :label="3">周三</el-checkbox>
+                <el-checkbox :label="4">周四</el-checkbox>
+                <el-checkbox :label="5">周五</el-checkbox>
+                <el-checkbox :label="6">周六</el-checkbox>
+                <el-checkbox :label="7">周日</el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+            <el-form-item label="重复周数">
+              <el-input-number v-model="batchForm.weekCount" :min="1" :max="18" />
+              <span style="margin-left: 10px; color: #909399">（持续几周）</span>
+            </el-form-item>
+          </template>
+
+          <!-- 自定义日期 -->
+          <template v-if="batchForm.ruleType === 'CUSTOM'">
+            <el-form-item label="时间段">
+              <el-time-picker v-model="batchForm.timeSlot" is-range range-separator="至" start-placeholder="开始" end-placeholder="结束" format="HH:mm" style="width: 100%" />
+            </el-form-item>
+            <el-form-item label="选择日期">
+              <el-date-picker v-model="batchForm.customDates" type="dates" placeholder="可多选日期" style="width: 100%" />
+            </el-form-item>
+          </template>
+        </template>
       </el-form>
       <template #footer>
         <el-button @click="reserveDialogVisible = false">取消</el-button>
@@ -121,7 +194,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useUserStore } from '@/store/user'
 import { getLabList, createLab, updateLab, updateLabStatus } from '@/api/lab'
-import { createReservation } from '@/api/reservation'
+import { createReservation, createSeriesReservation } from '@/api/reservation'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const userStore = useUserStore()
@@ -152,7 +225,20 @@ const reserveForm = reactive({
   labId: 0,
   labName: '',
   title: '',
+  mode: 'SINGLE' as 'SINGLE' | 'BATCH',
   timeRange: [] as Date[]
+})
+
+// 批量预约表单
+const batchForm = reactive({
+  ruleType: 'WEEKLY' as 'DAILY' | 'WEEKLY' | 'CUSTOM',
+  startDate: null as Date | null,
+  timeSlot: null as [Date, Date] | null,
+  count: 5,
+  interval: 1,
+  daysOfWeek: [] as number[],
+  weekCount: 4,
+  customDates: [] as Date[]
 })
 
 // 加载数据
@@ -269,29 +355,144 @@ const handleReserve = (row: any) => {
   reserveForm.labId = row.id
   reserveForm.labName = row.name
   reserveForm.title = ''
+  reserveForm.mode = 'SINGLE'
   reserveForm.timeRange = []
+  // 重置批量表单
+  batchForm.ruleType = 'WEEKLY'
+  batchForm.startDate = null
+  batchForm.timeSlot = null
+  batchForm.count = 5
+  batchForm.interval = 1
+  batchForm.daysOfWeek = []
+  batchForm.weekCount = 4
+  batchForm.customDates = []
   reserveDialogVisible.value = true
 }
 
 const handleReserveSubmit = async () => {
-  if (!reserveForm.title || !reserveForm.timeRange || reserveForm.timeRange.length !== 2) {
-    ElMessage.warning('请填写完整信息')
+  if (!reserveForm.title) {
+    ElMessage.warning('请填写预约事项')
     return
   }
 
   submitting.value = true
   try {
-    await createReservation({
-      labId: reserveForm.labId,
-      title: reserveForm.title,
-      startTime: reserveForm.timeRange[0]!.toISOString(),
-      endTime: reserveForm.timeRange[1]!.toISOString()
-    })
-    ElMessage.success('预约申请已提交')
+    if (reserveForm.mode === 'SINGLE') {
+      // 单次预约
+      if (!reserveForm.timeRange || reserveForm.timeRange.length !== 2) {
+        ElMessage.warning('请选择时间段')
+        submitting.value = false
+        return
+      }
+      await createReservation({
+        labId: reserveForm.labId,
+        title: reserveForm.title,
+        startTime: reserveForm.timeRange[0]!.toISOString(),
+        endTime: reserveForm.timeRange[1]!.toISOString()
+      })
+      ElMessage.success('预约申请已提交')
+    } else {
+      // 批量预约
+      if (!batchForm.timeSlot || batchForm.timeSlot.length !== 2) {
+        ElMessage.warning('请选择时间段')
+        submitting.value = false
+        return
+      }
+
+      // 构建起始时间
+      let startDateTime: Date
+      if (batchForm.ruleType === 'CUSTOM') {
+        if (!batchForm.customDates || batchForm.customDates.length === 0) {
+          ElMessage.warning('请选择日期')
+          submitting.value = false
+          return
+        }
+        startDateTime = new Date(batchForm.customDates[0]!)
+      } else {
+        if (!batchForm.startDate) {
+          ElMessage.warning('请选择起始日期')
+          submitting.value = false
+          return
+        }
+        startDateTime = new Date(batchForm.startDate)
+      }
+
+      // 设置时间
+      const startHour = batchForm.timeSlot[0].getHours()
+      const startMin = batchForm.timeSlot[0].getMinutes()
+      const endHour = batchForm.timeSlot[1].getHours()
+      const endMin = batchForm.timeSlot[1].getMinutes()
+
+      startDateTime.setHours(startHour, startMin, 0, 0)
+      const endDateTime = new Date(startDateTime)
+      endDateTime.setHours(endHour, endMin, 0, 0)
+
+      // 构建规则
+      let ruleValue: any = {}
+      if (batchForm.ruleType === 'DAILY') {
+        ruleValue = { count: batchForm.count, interval: batchForm.interval }
+      } else if (batchForm.ruleType === 'WEEKLY') {
+        if (batchForm.daysOfWeek.length === 0) {
+          ElMessage.warning('请选择周几')
+          submitting.value = false
+          return
+        }
+        ruleValue = {
+          daysOfWeek: batchForm.daysOfWeek,
+          count: batchForm.daysOfWeek.length * batchForm.weekCount
+        }
+      } else if (batchForm.ruleType === 'CUSTOM') {
+        ruleValue = {
+          dates: batchForm.customDates.map(d => {
+            const date = new Date(d)
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+          })
+        }
+      }
+
+      const res = await createSeriesReservation({
+        labId: reserveForm.labId,
+        rule: {
+          type: batchForm.ruleType,
+          value: ruleValue,
+          mode: 'LENIENT'
+        },
+        time: {
+          startTime: startDateTime.toISOString(),
+          endTime: endDateTime.toISOString()
+        }
+      })
+
+      // 处理批量预约结果
+      const data = res.data as any
+      const createdCount = data.created?.length || 0
+      const failedCount = data.failed?.length || 0
+
+      if (failedCount > 0 && createdCount > 0) {
+        // 部分成功
+        const failedDates = data.failed.map((f: any) => {
+          const d = new Date(f.startTime)
+          return `${d.getMonth() + 1}/${d.getDate()}`
+        }).join('、')
+        ElMessageBox.alert(
+          `成功创建 ${createdCount} 个预约，${failedCount} 个预约因冲突失败。\n\n失败日期：${failedDates}`,
+          '批量预约结果',
+          { type: 'warning' }
+        )
+      } else if (failedCount > 0 && createdCount === 0) {
+        // 全部失败
+        ElMessage.error('所有预约都因冲突失败')
+      } else {
+        // 全部成功
+        ElMessage.success(`批量预约成功，共创建 ${createdCount} 个预约`)
+      }
+    }
+
     reserveDialogVisible.value = false
     loadData()
-  } catch (error) {
+  } catch (error: any) {
     console.error('预约失败:', error)
+    ElMessage.error(error.message || '预约失败')
   } finally {
     submitting.value = false
   }

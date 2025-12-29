@@ -99,24 +99,26 @@ public class ReservationController extends BaseController {
     }
 
     @PostMapping("/{id}/approve")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
     public ApiResponse<Void> approve(@AuthenticationPrincipal Jwt jwt,
                                      @PathVariable Long id,
-                                     @Valid @RequestBody ReservationApprovalRequest body,
+                                     @RequestBody(required = false) ReservationApprovalRequest body,
                                      HttpServletRequest request) {
         Long operatorId = SecurityUtil.getUserId(jwt);
-        reservationService.approve(operatorId, id, body.getReason());
+        String reason = body != null ? body.getReason() : null;
+        reservationService.approve(operatorId, id, reason);
         return success(request, null);
     }
 
     @PostMapping("/{id}/reject")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
     public ApiResponse<Void> reject(@AuthenticationPrincipal Jwt jwt,
                                     @PathVariable Long id,
-                                    @Valid @RequestBody ReservationApprovalRequest body,
+                                    @RequestBody(required = false) ReservationApprovalRequest body,
                                     HttpServletRequest request) {
         Long operatorId = SecurityUtil.getUserId(jwt);
-        reservationService.reject(operatorId, id, body.getReason());
+        String reason = body != null ? body.getReason() : null;
+        reservationService.reject(operatorId, id, reason);
         return success(request, null);
     }
 

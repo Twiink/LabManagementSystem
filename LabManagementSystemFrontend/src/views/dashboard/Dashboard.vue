@@ -43,12 +43,12 @@
         <el-table-column prop="resourceName" label="资源" width="150" />
         <el-table-column prop="startTime" label="开始时间">
           <template #default="scope">
-            {{ formatDateTime(scope.row.startTime) }}
+            {{ formatDateTimeShort(scope.row.startTime) }}
           </template>
         </el-table-column>
         <el-table-column prop="endTime" label="结束时间">
           <template #default="scope">
-            {{ formatDateTime(scope.row.endTime) }}
+            {{ formatDateTimeShort(scope.row.endTime) }}
           </template>
         </el-table-column>
         <el-table-column prop="status" label="状态" width="100">
@@ -68,6 +68,7 @@ import { useUserStore } from '@/store/user'
 import { getLabList } from '@/api/lab'
 import { getDeviceList } from '@/api/device'
 import { getReservationList } from '@/api/reservation'
+import { formatDateTime } from '@/utils/time'
 import * as echarts from 'echarts'
 
 const router = useRouter()
@@ -336,16 +337,12 @@ const getStatusLabel = (status: string) => {
   return map[status] || status
 }
 
-const formatDateTime = (dateStr: string) => {
-  if (!dateStr) return ''
-  const date = new Date(dateStr)
-  return date.toLocaleString('zh-CN', {
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
+const formatDateTimeShort = (dateStr: string) => formatDateTime(dateStr, {
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit'
+})
 </script>
 
 <style scoped lang="scss">

@@ -43,12 +43,12 @@
           </el-table-column>
           <el-table-column prop="startTime" label="开始时间" width="150">
             <template #default="scope">
-              {{ formatDateTime(scope.row.startTime) }}
+              {{ formatDateTimeFull(scope.row.startTime) }}
             </template>
           </el-table-column>
           <el-table-column prop="endTime" label="结束时间" width="150">
             <template #default="scope">
-              {{ formatDateTime(scope.row.endTime) }}
+              {{ formatDateTimeFull(scope.row.endTime) }}
             </template>
           </el-table-column>
           <el-table-column prop="status" label="状态" width="100">
@@ -120,7 +120,7 @@
               <div class="calendar-events">
                 <div v-for="item in reservationsByDate[data.day]" :key="item.id" class="calendar-event" :class="getEventClass(item.status)">
                   <span class="event-title">{{ item.title }}</span>
-                  <span class="event-time">{{ formatTime(item.startTime) }}</span>
+                  <span class="event-time">{{ formatTimeShort(item.startTime) }}</span>
                 </div>
               </div>
             </div>
@@ -228,13 +228,6 @@
               <el-date-picker v-model="batchForm.customDates" type="dates" placeholder="可多选日期" style="width: 100%" />
             </el-form-item>
           </template>
-
-          <el-form-item label="冲突处理">
-            <el-radio-group v-model="batchForm.conflictMode">
-              <el-radio label="LENIENT">跳过冲突继续创建</el-radio>
-              <el-radio label="STRICT">有冲突则全部取消</el-radio>
-            </el-radio-group>
-          </el-form-item>
         </template>
       </el-form>
       <template #footer>
@@ -252,8 +245,8 @@
         <el-descriptions-item label="申请人">{{ detailData.userName }}</el-descriptions-item>
         <el-descriptions-item label="资源">{{ detailData.resourceName }}</el-descriptions-item>
         <el-descriptions-item label="类型">{{ getTypeLabel(detailData.type) }}</el-descriptions-item>
-        <el-descriptions-item label="开始时间">{{ formatDateTime(detailData.startTime) }}</el-descriptions-item>
-        <el-descriptions-item label="结束时间">{{ formatDateTime(detailData.endTime) }}</el-descriptions-item>
+        <el-descriptions-item label="开始时间">{{ formatDateTimeFull(detailData.startTime) }}</el-descriptions-item>
+        <el-descriptions-item label="结束时间">{{ formatDateTimeFull(detailData.endTime) }}</el-descriptions-item>
         <el-descriptions-item label="状态">
           <el-tag :type="getStatusType(detailData.status)" effect="dark">{{ getStatusLabel(detailData.status) }}</el-tag>
         </el-descriptions-item>
@@ -274,6 +267,7 @@ import { getReservationList, createReservation, createSeriesReservation, approve
 import { getLabList } from '@/api/lab'
 import { getDeviceList } from '@/api/device'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { formatDateKey, formatDateTime, formatTime, parseDateTime } from '@/utils/time'
 
 const route = useRoute()
 const userStore = useUserStore()
@@ -318,8 +312,7 @@ const batchForm = reactive({
   interval: 1,
   daysOfWeek: [] as number[],
   weekCount: 4,
-  customDates: [] as Date[],
-  conflictMode: 'LENIENT' as 'STRICT' | 'LENIENT'
+  customDates: [] as Date[]
 })
 
 // 详情弹窗
@@ -343,10 +336,17 @@ const resourceOptions = computed(() => {
   return resourceType.value === 'LAB' ? labs.value : devices.value
 })
 
+// 将 UTC 时间转换为本地日期字符串 (YYYY-MM-DD)
+const toLocalDateKey = (dateStr: string) => {
+  const date = parseDateTime(dateStr)
+  return date ? formatDateKey(date) : ''
+}
+
 const reservationsByDate = computed(() => {
   const map: Record<string, any[]> = {}
   tableData.value.forEach(item => {
-    const dateKey = item.startTime?.split('T')[0] || item.startTime?.split(' ')[0]
+    // 使用本地日期作为 key，而不是 UTC 日期
+    const dateKey = toLocalDateKey(item.startTime)
     if (!dateKey) return
     if (!map[dateKey]) map[dateKey] = []
     map[dateKey].push(item)
@@ -391,14 +391,24 @@ const loadData = async () => {
     const res = await getReservationList(params)
     const items = res.data.items || []
 
-    // 添加资源名称
-    tableData.value = items.map((item: any) => ({
-      ...item,
-      resourceName: item.labId
-        ? labs.value.find(l => l.id === item.labId)?.name || `实验室 ${item.labId}`
-        : devices.value.find(d => d.id === item.deviceId)?.name || `设备 ${item.deviceId}`,
-      userName: item.requester?.name || item.userName || '未知用户'
-    }))
+    // 调试：打印第一条记录查看字段
+    if (items.length > 0) {
+      console.log('API 返回的第一条预约数据:', items[0])
+      console.log('requesterName 字段值:', items[0].requesterName)
+    }
+
+    // 添加资源名称和用户名
+    tableData.value = items.map((item: any) => {
+      // 尝试多种可能的字段名
+      const userName = item.requesterName || item.requester_name || item.userName || item.user_name || ''
+      return {
+        ...item,
+        resourceName: item.labId
+          ? labs.value.find(l => l.id === item.labId)?.name || `实验室 ${item.labId}`
+          : devices.value.find(d => d.id === item.deviceId)?.name || `设备 ${item.deviceId}`,
+        userName: userName || '未知用户'
+      }
+    })
     total.value = res.data.total
   } catch (error) {
     console.error('加载预约列表失败:', error)
@@ -436,7 +446,6 @@ const handleApply = () => {
   batchForm.daysOfWeek = []
   batchForm.weekCount = 4
   batchForm.customDates = []
-  batchForm.conflictMode = 'LENIENT'
   dialogVisible.value = true
 }
 
@@ -529,7 +538,7 @@ const handleSubmit = async () => {
         rule: {
           type: batchForm.ruleType,
           value: ruleValue,
-          mode: batchForm.conflictMode
+          mode: 'LENIENT'
         },
         time: {
           startTime: startDateTime.toISOString(),
@@ -652,25 +661,15 @@ const getEventClass = (status: string) => {
   return map[status] || ''
 }
 
-const formatDateTime = (dateStr: string) => {
-  if (!dateStr) return ''
-  const date = new Date(dateStr)
-  return date.toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
+const formatDateTimeFull = (dateStr: string) => formatDateTime(dateStr, {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit'
+})
 
-const formatTime = (value: string) => {
-  if (!value) return ''
-  if (value.includes('T')) {
-    return value.split('T')[1]?.replace('Z', '').slice(0, 5)
-  }
-  return value.split(' ')[1]?.slice(0, 5) || ''
-}
+const formatTimeShort = (value: string) => formatTime(value)
 </script>
 
 <style scoped lang="scss">

@@ -1,9 +1,6 @@
 package com.example.labmanagementsystembackend.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
-
 public class ReservationApprovalRequest {
-    @NotBlank
     private String reason;
 
     public String getReason() {

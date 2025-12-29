@@ -18,6 +18,8 @@ public class Reservation {
     private Long id;
     @Column(name = "requester_id", nullable = false)
     private Long requesterId;
+    @jakarta.persistence.Transient
+    private String requesterName;
     @Column(name = "lab_id", nullable = false)
     private Long labId;
     @Column(name = "device_id")
@@ -63,6 +65,14 @@ public class Reservation {
 
     public void setRequesterId(Long requesterId) {
         this.requesterId = requesterId;
+    }
+
+    public String getRequesterName() {
+        return requesterName;
+    }
+
+    public void setRequesterName(String requesterName) {
+        this.requesterName = requesterName;
     }
 
     public Long getLabId() {

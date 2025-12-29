@@ -164,12 +164,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
 import { useUserStore } from '@/store/user'
 import { getLabList } from '@/api/lab'
-import { getReservationList } from '@/api/reservation'
+import { getCalendarEvents } from '@/api/calendar'
+import { formatDateKey, formatDateTime, formatTime, parseDateTime } from '@/utils/time'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -290,32 +291,18 @@ const weekViewDays = computed(() => {
 // 获取某日期的预约
 function getEventsForDate(dateStr: string) {
   return allReservations.value.filter(r => {
-    const eventDate = r.startTime?.split('T')[0] || r.startTime?.split(' ')[0]
-    return eventDate === dateStr
+    const eventDate = parseDateTime(r.startTime)
+    if (!eventDate) return false
+    return formatDateKey(eventDate) === dateStr
   })
 }
 
 // 格式化日期字符串
 function formatDateStr(d: Date) {
-  const y = d.getFullYear()
-  const m = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
-  return `${y}-${m}-${day}`
+  return formatDateKey(d)
 }
 
 // 格式化时间
-function formatTime(timeStr: string) {
-  if (!timeStr) return ''
-  const t = timeStr.split('T')[1] || timeStr.split(' ')[1]
-  return t ? t.slice(0, 5) : ''
-}
-
-function formatDateTime(timeStr: string) {
-  if (!timeStr) return ''
-  const d = new Date(timeStr)
-  return d.toLocaleString('zh-CN')
-}
-
 // 状态相关
 function getEventStatusClass(status: string) {
   const map: Record<string, string> = {
@@ -366,19 +353,21 @@ async function loadLabs() {
 async function loadReservations() {
   loading.value = true
   try {
-    const params: any = { page: 1, pageSize: 500 }
+    const { from, to } = getViewRange()
+    const params: any = { from, to }
     if (selectedLabId.value) {
       params.labId = selectedLabId.value
     }
 
-    const res = await getReservationList(params)
-    const items = res.data.items || []
+    const res = await getCalendarEvents(params)
+    const items = res.data || []
 
     // 添加实验室名称
     allReservations.value = items.map((item: any) => ({
       ...item,
+      id: item.id ?? item.reservationId,
       labName: labs.value.find(l => l.id === item.labId)?.name || `实验室${item.labId}`,
-      userName: item.user?.name || item.userName || '未知'
+      userName: item.requesterName || item.userName || item.user?.name || '未知'
     }))
 
     // 如果没有数据，添加示例数据便于展示
@@ -485,10 +474,39 @@ function goToReserve() {
   })
 }
 
+function getViewRange() {
+  const base = new Date(currentDate.value)
+  if (viewMode.value === 'month') {
+    const year = base.getFullYear()
+    const month = base.getMonth()
+    const firstDay = new Date(year, month, 1)
+    const start = new Date(firstDay)
+    start.setDate(firstDay.getDate() - firstDay.getDay())
+    start.setHours(0, 0, 0, 0)
+    const end = new Date(start)
+    end.setDate(start.getDate() + 41)
+    end.setHours(23, 59, 59, 999)
+    return { from: start.toISOString(), to: end.toISOString() }
+  }
+
+  const day = base.getDay()
+  const start = new Date(base)
+  start.setDate(base.getDate() - day)
+  start.setHours(0, 0, 0, 0)
+  const end = new Date(start)
+  end.setDate(start.getDate() + 6)
+  end.setHours(23, 59, 59, 999)
+  return { from: start.toISOString(), to: end.toISOString() }
+}
+
 // 初始化
 onMounted(async () => {
   await loadLabs()
   await loadReservations()
+})
+
+watch([currentDate, viewMode], () => {
+  loadReservations()
 })
 </script>
 

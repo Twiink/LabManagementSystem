@@ -5,6 +5,7 @@ import java.time.OffsetDateTime;
 public class ReservationResponse {
     private Long id;
     private Long requesterId;
+    private String requesterName;
     private Long labId;
     private Long deviceId;
     private Long courseId;
@@ -15,10 +16,11 @@ public class ReservationResponse {
     private String type;
     private String priority;
 
-    public ReservationResponse(Long id, Long requesterId, Long labId, Long deviceId, Long courseId, String title,
+    public ReservationResponse(Long id, Long requesterId, String requesterName, Long labId, Long deviceId, Long courseId, String title,
                                OffsetDateTime startTime, OffsetDateTime endTime, String status, String type, String priority) {
         this.id = id;
         this.requesterId = requesterId;
+        this.requesterName = requesterName;
         this.labId = labId;
         this.deviceId = deviceId;
         this.courseId = courseId;
@@ -36,6 +38,10 @@ public class ReservationResponse {
 
     public Long getRequesterId() {
         return requesterId;
+    }
+
+    public String getRequesterName() {
+        return requesterName;
     }
 
     public Long getLabId() {

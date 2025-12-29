@@ -6,6 +6,7 @@
     <resultMap id="ReservationMap" type="com.example.labmanagementsystembackend.domain.entity.Reservation">
         <id column="id" property="id" />
         <result column="requester_id" property="requesterId" />
+        <result column="requester_name" property="requesterName" />
         <result column="lab_id" property="labId" />
         <result column="device_id" property="deviceId" />
         <result column="course_id" property="courseId" />
@@ -24,27 +25,32 @@
     </resultMap>
 
     <select id="findById" resultMap="ReservationMap">
-        SELECT * FROM reservations WHERE id = #{id} AND is_deleted = 0
+        SELECT r.*, u.name as requester_name
+        FROM reservations r
+        LEFT JOIN users u ON r.requester_id = u.id
+        WHERE r.id = #{id} AND r.is_deleted = 0
     </select>
 
     <select id="findReservations" resultMap="ReservationMap">
-        SELECT * FROM reservations
+        SELECT r.*, u.name as requester_name
+        FROM reservations r
+        LEFT JOIN users u ON r.requester_id = u.id
         <where>
-            AND is_deleted = 0
-            <if test="labId != null">AND lab_id = #{labId}</if>
-            <if test="deviceId != null">AND device_id = #{deviceId}</if>
-            <if test="requesterId != null">AND requester_id = #{requesterId}</if>
+            AND r.is_deleted = 0
+            <if test="labId != null">AND r.lab_id = #{labId}</if>
+            <if test="deviceId != null">AND r.device_id = #{deviceId}</if>
+            <if test="requesterId != null">AND r.requester_id = #{requesterId}</if>
             <if test="status != null and status.size() > 0">
-                AND status IN
+                AND r.status IN
                 <foreach collection="status" item="item" open="(" separator="," close=")">
                     #{item}
                 </foreach>
             </if>
-            <if test="type != null and type != ''">AND type = #{type}</if>
-            <if test="fromTime != null">AND start_time &gt;= #{fromTime}</if>
-            <if test="toTime != null">AND end_time &lt;= #{toTime}</if>
+            <if test="type != null and type != ''">AND r.type = #{type}</if>
+            <if test="fromTime != null">AND r.start_time &gt;= #{fromTime}</if>
+            <if test="toTime != null">AND r.end_time &lt;= #{toTime}</if>
         </where>
-        ORDER BY start_time DESC
+        ORDER BY r.start_time DESC
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
@@ -111,12 +117,14 @@
     </select>
 
     <select id="findCalendar" resultMap="ReservationMap">
-        SELECT * FROM reservations
-        WHERE start_time &lt;= #{toTime} AND end_time &gt;= #{fromTime}
-        AND is_deleted = 0
-        <if test="labId != null">AND lab_id = #{labId}</if>
-        <if test="deviceId != null">AND device_id = #{deviceId}</if>
-        ORDER BY start_time ASC
+        SELECT r.*, u.name as requester_name
+        FROM reservations r
+        LEFT JOIN users u ON r.requester_id = u.id
+        WHERE r.start_time &lt;= #{toTime} AND r.end_time &gt;= #{fromTime}
+        AND r.is_deleted = 0
+        <if test="labId != null">AND r.lab_id = #{labId}</if>
+        <if test="deviceId != null">AND r.device_id = #{deviceId}</if>
+        ORDER BY r.start_time ASC
     </select>
 
     <!-- 查找过期未签到的预约：APPROVED 状态且开始时间已过阈值 -->
