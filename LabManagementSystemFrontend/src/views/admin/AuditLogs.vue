@@ -1,71 +1,91 @@
 <template>
   <div class="audit-container">
     <div class="glass-card">
-      <h3>系统审计日志</h3>
+      <div class="header-section">
+        <h3>系统审计日志</h3>
+      </div>
 
       <!-- 筛选条件 -->
-      <el-form :inline="true" class="filter-form">
-        <el-form-item label="目标类型">
-          <el-select v-model="queryParams.targetType" placeholder="全部" clearable style="width: 150px">
-            <el-option label="实验室" value="LAB" />
-            <el-option label="设备" value="DEVICE" />
-            <el-option label="预约" value="RESERVATION" />
-            <el-option label="周期预约" value="RESERVATION_SERIES" />
-            <el-option label="用户" value="USER" />
-            <el-option label="课程" value="COURSE" />
-            <el-option label="规则配置" value="RULE_CONFIG" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="handleSearch">查询</el-button>
-          <el-button @click="handleReset">重置</el-button>
-        </el-form-item>
-      </el-form>
+      <div class="action-bar-mini">
+        <el-form :inline="true" class="filter-form">
+          <el-form-item label="对象类型">
+            <el-select 
+              v-model="queryParams.targetType" 
+              placeholder="全部" 
+              clearable 
+              style="width: 160px"
+              class="industrial-select"
+            >
+              <el-option label="实验室" value="LAB" />
+              <el-option label="设备" value="DEVICE" />
+              <el-option label="预约" value="RESERVATION" />
+              <el-option label="周期预约" value="RESERVATION_SERIES" />
+              <el-option label="用户" value="USER" />
+              <el-option label="课程" value="COURSE" />
+              <el-option label="规则配置" value="RULE_CONFIG" />
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="handleSearch" class="action-btn">查询</el-button>
+            <el-button @click="handleReset" class="action-btn outline">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
 
-      <!-- 日志表格 -->
+      <!-- 日志表格 - 均匀分布 -->
       <el-table
         v-loading="loading"
         :data="tableData"
         style="width: 100%"
       >
-        <el-table-column prop="createdAt" label="时间">
+        <el-table-column prop="createdAt" label="时间" min-width="180">
           <template #default="{ row }">
-            {{ formatTime(row.createdAt) }}
+            <span class="mono-text">{{ formatTime(row.createdAt) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="actorName" label="操作人">
+        <el-table-column prop="actorName" label="操作人" min-width="120">
           <template #default="{ row }">
-            {{ row.actorName || `用户#${row.actorId}` }}
+            <span class="actor-text">{{ row.actorName || `UID#${row.actorId}` }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="action" label="操作">
+        <el-table-column prop="action" label="操作" min-width="140">
           <template #default="{ row }">
-            <el-tag :type="getActionType(row.action)" size="small">
+            <el-tag 
+              :type="getActionType(row.action)" 
+              effect="plain" 
+              class="status-tag"
+              size="small"
+            >
               {{ formatAction(row.action) }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="targetType" label="对象类型">
+        <el-table-column prop="targetType" label="对象类型" min-width="120">
           <template #default="{ row }">
-            {{ formatTargetType(row.targetType) }}
+            <span class="type-badge">{{ formatTargetType(row.targetType) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="targetId" label="对象ID" />
-        <el-table-column prop="detail" label="详情">
+        <el-table-column prop="targetId" label="对象ID" min-width="100">
           <template #default="{ row }">
-            {{ row.detail || '-' }}
+            <span class="mono-text">#{{ row.targetId }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="detail" label="详情" min-width="250">
+          <template #default="{ row }">
+            <span class="detail-text">{{ row.detail || '-' }}</span>
           </template>
         </el-table-column>
       </el-table>
 
       <!-- 分页 -->
-      <div style="margin-top: 20px; display: flex; justify-content: flex-end;">
+      <div class="pagination-container">
         <el-pagination
           v-model:current-page="queryParams.page"
           v-model:page-size="queryParams.pageSize"
           :page-sizes="[10, 20, 50, 100]"
           :total="total"
-          layout="total, sizes, prev, pager, next, jumper"
+          layout="total, sizes, prev, pager, next"
+          background
           @size-change="loadLogs"
           @current-change="loadLogs"
         />
@@ -132,21 +152,17 @@ const formatTime = (time: string) => {
   if (!time) return '-'
   try {
     const date = new Date(time)
-    // 检查日期是否有效
-    if (isNaN(date.getTime())) {
-      return '-'
-    }
-    return date.toLocaleString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-    })
+    if (isNaN(date.getTime())) return '-'
+    
+    const pad = (n: number) => String(n).padStart(2, '0')
+    const y = date.getFullYear()
+    const m = pad(date.getMonth() + 1)
+    const d = pad(date.getDate())
+    const hh = pad(date.getHours())
+    const mm = pad(date.getMinutes())
+    const ss = pad(date.getSeconds())
+    return `${y}/${m}/${d} ${hh}:${mm}:${ss}`
   } catch (error) {
-    console.error('时间格式化错误:', error)
     return '-'
   }
 }
@@ -154,15 +170,10 @@ const formatTime = (time: string) => {
 // 格式化操作类型
 const formatAction = (action: string) => {
   const actionMap: Record<string, string> = {
-    // 通用操作
     CREATE: '创建',
     UPDATE: '更新',
     DELETE: '删除',
-
-    // 用户操作
     RESET_PASSWORD: '重置密码',
-
-    // 预约操作
     RESERVATION_CREATE: '创建预约',
     RESERVATION_UPDATE: '更新预约',
     RESERVATION_CANCEL: '取消预约',
@@ -173,54 +184,21 @@ const formatAction = (action: string) => {
     RESERVATION_OVERRIDE: '覆盖预约',
     RESERVATION_SERIES_CREATE: '创建周期预约',
     RESERVATION_COURSE_CREATE: '创建课程预约',
-
-    // 课程操作
     COURSE_ADD_STUDENT: '添加学生',
     COURSE_REMOVE_STUDENT: '移除学生',
-
-    // 其他
     STATUS_CHANGE: '状态变更',
-    LOGIN: '登录',
-    LOGOUT: '退出登录'
+    LOGIN: '登录认证',
+    LOGOUT: '退出系统'
   }
   return actionMap[action] || action
 }
 
 // 获取操作类型的标签颜色
 const getActionType = (action: string) => {
-  const typeMap: Record<string, 'success' | 'warning' | 'danger' | 'info' | ''> = {
-    // 创建类操作 - 绿色
-    CREATE: 'success',
-    RESERVATION_CREATE: 'success',
-    RESERVATION_SERIES_CREATE: 'success',
-    RESERVATION_COURSE_CREATE: 'success',
-    COURSE_ADD_STUDENT: 'success',
-
-    // 批准类操作 - 绿色
-    RESERVATION_APPROVE: 'success',
-    RESERVATION_CHECKIN: 'success',
-
-    // 更新/修改类操作 - 橙色
-    UPDATE: 'warning',
-    RESERVATION_UPDATE: 'warning',
-    RESERVATION_CANCEL: 'warning',
-    RESERVATION_OVERRIDE: 'warning',
-    COURSE_REMOVE_STUDENT: 'warning',
-    STATUS_CHANGE: 'warning',
-    RESERVATION_CHECKOUT: 'warning',
-
-    // 删除/拒绝类操作 - 红色
-    DELETE: 'danger',
-    RESERVATION_REJECT: 'danger',
-
-    // 信息类操作 - 蓝色
-    RESET_PASSWORD: 'info',
-
-    // 普通操作 - 灰色
-    LOGIN: '',
-    LOGOUT: ''
-  }
-  return typeMap[action] || 'info'
+  if (action.includes('CREATE') || action.includes('APPROVE') || action === 'LOGIN') return 'success'
+  if (action.includes('UPDATE') || action.includes('CHANGE') || action.includes('CANCEL')) return 'warning'
+  if (action.includes('DELETE') || action.includes('REJECT')) return 'danger'
+  return 'info'
 }
 
 // 格式化目标类型
@@ -228,16 +206,15 @@ const formatTargetType = (type: AuditTargetType) => {
   const typeMap: Record<AuditTargetType, string> = {
     LAB: '实验室',
     DEVICE: '设备',
-    RESERVATION: '预约',
-    RESERVATION_SERIES: '周期预约',
-    USER: '用户',
-    COURSE: '课程',
-    RULE_CONFIG: '规则配置'
+    RESERVATION: '预约记录',
+    RESERVATION_SERIES: '周期规则',
+    USER: '用户账户',
+    COURSE: '课程信息',
+    RULE_CONFIG: '系统规则'
   }
   return typeMap[type] || type
 }
 
-// 页面加载时获取数据
 onMounted(() => {
   loadLogs()
 })
@@ -258,29 +235,110 @@ onMounted(() => {
   padding: 24px;
 }
 
-h3 {
-  margin: 0 0 24px;
-  color: var(--text-main);
-  font-size: 20px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  
-  &::before {
-    content: '';
-    display: block;
-    width: 4px;
-    height: 18px;
-    background: var(--primary-color);
-    margin-right: 12px;
-    border-radius: 2px;
+.header-section {
+  margin-bottom: 32px;
+  h3 {
+    margin: 0;
+    color: var(--text-main);
+    font-size: 20px;
+    font-weight: 800;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    
+    &::before {
+      content: '';
+      display: block;
+      width: 8px;
+      height: 20px;
+      background: var(--primary-color);
+      margin-right: 12px;
+      border: 1px solid var(--accent-border);
+    }
   }
 }
 
-.filter-form {
+.action-bar-mini {
   margin-bottom: 24px;
   padding: 16px;
-  background: rgba(255, 255, 255, 0.4);
-  border-radius: 8px;
+  background: var(--bg-color);
+  border: 1px solid var(--accent-border);
+}
+
+.action-btn {
+  font-weight: 800;
+  letter-spacing: 1px;
+  &.outline { background: #fff; }
+}
+
+.mono-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-regular);
+}
+
+.actor-text {
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.detail-text {
+  font-size: 13px;
+  color: var(--text-regular);
+}
+
+.type-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-regular);
+  padding: 2px 6px;
+  border: 1px solid var(--accent-border);
+  background: #fff;
+  white-space: nowrap;
+}
+
+/* Status Tag Style */
+.status-tag {
+  border-radius: 0px !important;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  border-width: 1px;
+  padding: 0 8px;
+  height: 22px;
+  line-height: 20px;
+  
+  &.el-tag--success {
+    background-color: rgba(16, 185, 129, 0.1) !important;
+    border-color: #10b981 !important;
+    color: #10b981 !important;
+  }
+  
+  &.el-tag--warning {
+    background-color: rgba(245, 158, 11, 0.1) !important;
+    border-color: #f59e0b !important;
+    color: #f59e0b !important;
+  }
+  
+  &.el-tag--danger {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+    border-color: #ef4444 !important;
+    color: #ef4444 !important;
+  }
+  
+  &.el-tag--info {
+    background-color: #f4f4f5 !important;
+    border-color: #909399 !important;
+    color: #909399 !important;
+  }
+}
+
+.pagination-container {
+  margin-top: 32px;
+  display: flex;
+  justify-content: flex-end;
 }
 </style>

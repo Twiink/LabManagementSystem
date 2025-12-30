@@ -2,35 +2,62 @@
   <div class="devices-container">
     <div class="glass-card action-bar">
       <el-form inline>
-        <el-form-item>
-          <el-input v-model="searchQuery" placeholder="搜索设备名称/型号" prefix-icon="Search" clearable @clear="handleSearch" />
+        <el-form-item label="搜索">
+          <el-input 
+            v-model="searchQuery" 
+            placeholder="设备名称/型号" 
+            prefix-icon="Search" 
+            clearable 
+            @clear="handleSearch" 
+            class="industrial-input"
+          />
         </el-form-item>
-        <el-form-item>
-          <el-select v-model="statusFilter" placeholder="状态" clearable style="width: 120px" @change="handleSearch">
+        <el-form-item label="状态">
+          <el-select 
+            v-model="statusFilter" 
+            placeholder="全部状态" 
+            clearable 
+            style="width: 140px" 
+            @change="handleSearch"
+            class="industrial-select"
+          >
             <el-option label="空闲" value="IDLE" />
             <el-option label="使用中" value="IN_USE" />
             <el-option label="维护中" value="MAINTENANCE" />
+            <el-option label="预约中" value="RESERVED" />
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleSearch">查询</el-button>
+          <el-button type="primary" @click="handleSearch" class="action-btn">查询</el-button>
           <!-- 只有管理员可以新增设备 -->
-          <el-button v-if="userStore.isAdmin" type="success" @click="handleAdd" icon="Plus">新增设备</el-button>
+          <el-button 
+            v-if="userStore.isAdmin" 
+            class="action-btn add-btn" 
+            @click="handleAdd" 
+            icon="Plus"
+          >新增设备</el-button>
         </el-form-item>
       </el-form>
     </div>
 
     <div class="glass-card">
       <el-table :data="tableData" style="width: 100%" v-loading="loading">
-        <el-table-column prop="name" label="设备名称" />
-        <el-table-column prop="model" label="型号" />
-        <el-table-column prop="labName" label="所属实验室" />
-        <el-table-column prop="status" label="状态" width="120">
+        <el-table-column prop="name" label="设备名称" min-width="200" />
+        <el-table-column prop="model" label="型号" min-width="150" />
+        <el-table-column prop="labName" label="所属实验室" min-width="200" />
+        <el-table-column prop="status" label="状态" min-width="120">
           <template #default="scope">
-            <el-tag :type="getStatusType(scope.row.status)" effect="dark" round>{{ getStatusLabel(scope.row.status) }}</el-tag>
+            <el-tag 
+              :type="getStatusType(scope.row.status)" 
+              effect="plain" 
+              class="status-tag"
+              size="small"
+            >
+              {{ getStatusLabel(scope.row.status) }}
+            </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="200">
+        <el-table-column label="操作" min-width="180" fixed="right">
           <template #default="scope">
             <!-- 学生和教师只能预约空闲设备 -->
             <el-button
@@ -56,9 +83,14 @@
       </div>
     </div>
 
-    <!-- Edit/Add Dialog (管理员专用) -->
-    <el-dialog v-model="dialogVisible" :title="dialogType === 'add' ? '新增设备' : '编辑设备'" width="500px">
-      <el-form :model="form" label-width="100px">
+        <!-- Edit/Add Dialog (管理员专用) -->
+        <el-dialog 
+          v-model="dialogVisible" 
+          :title="dialogType === 'add' ? '新增设备' : '编辑设备'" 
+          width="500px"
+          class="industrial-dialog"
+          :show-close="false"
+        >      <el-form :model="form" label-width="100px">
         <el-form-item label="设备名称">
           <el-input v-model="form.name" placeholder="请输入设备名称" />
         </el-form-item>
@@ -74,10 +106,11 @@
           <el-input v-model="form.description" type="textarea" placeholder="请输入描述信息" />
         </el-form-item>
         <el-form-item label="状态" v-if="dialogType === 'edit'">
-          <el-select v-model="form.status">
+          <el-select v-model="form.status" style="width: 100%">
             <el-option label="空闲" value="IDLE" />
             <el-option label="使用中" value="IN_USE" />
             <el-option label="维护中" value="MAINTENANCE" />
+            <el-option label="预约中" value="RESERVED" />
           </el-select>
         </el-form-item>
       </el-form>
@@ -89,9 +122,14 @@
       </template>
     </el-dialog>
 
-    <!-- 预约弹窗 (学生/教师使用) -->
-    <el-dialog v-model="reserveDialogVisible" title="设备预约" width="650px">
-      <el-form :model="reserveForm" label-width="100px">
+        <!-- 预约弹窗 (学生/教师使用) -->
+        <el-dialog 
+          v-model="reserveDialogVisible" 
+          title="设备预约" 
+          width="650px"
+          class="industrial-dialog"
+          :show-close="false"
+        >      <el-form :model="reserveForm" label-width="100px">
         <el-form-item label="设备">
           <el-input :value="reserveForm.deviceName" disabled />
         </el-form-item>
@@ -183,8 +221,10 @@
         </template>
       </el-form>
       <template #footer>
-        <el-button @click="reserveDialogVisible = false">取消</el-button>
-        <el-button type="primary" :loading="submitting" @click="handleReserveSubmit">提交预约</el-button>
+        <span class="dialog-footer">
+          <el-button @click="reserveDialogVisible = false">取消</el-button>
+          <el-button type="primary" :loading="submitting" @click="handleReserveSubmit">提交预约</el-button>
+        </span>
       </template>
     </el-dialog>
   </div>
@@ -266,7 +306,6 @@ const loadData = async () => {
       status: (statusFilter.value || undefined) as any,
       keyword: searchQuery.value || undefined
     })
-    // 将实验室ID转换为实验室名称
     const items = res.data.items || []
     tableData.value = items.map((item: any) => ({
       ...item,
@@ -561,9 +600,75 @@ const getStatusLabel = (status: string) => {
   margin-bottom: 24px;
 }
 
+.action-btn {
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.add-btn {
+  border-style: dashed !important;
+  border-width: 2px !important;
+  background: #fff !important;
+  color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  
+  &:hover {
+    background: rgba(255, 192, 133, 0.1) !important;
+  }
+}
+
 .pagination-container {
   margin-top: 24px;
   display: flex;
   justify-content: flex-end;
+}
+
+/* Status Tag Style */
+.status-tag {
+  border-radius: 0px !important;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  border-width: 1px;
+  padding: 0 8px;
+  height: 22px;
+  line-height: 20px;
+  
+  &.el-tag--success {
+    background-color: rgba(16, 185, 129, 0.1) !important;
+    border-color: #10b981 !important;
+    color: #10b981 !important;
+  }
+  
+  &.el-tag--warning {
+    background-color: rgba(245, 158, 11, 0.1) !important;
+    border-color: #f59e0b !important;
+    color: #f59e0b !important;
+  }
+  
+  &.el-tag--danger {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+    border-color: #ef4444 !important;
+    color: #ef4444 !important;
+  }
+  
+  &.el-tag--primary {
+    background-color: rgba(255, 192, 133, 0.1) !important;
+    border-color: var(--accent-border) !important;
+    color: var(--text-main) !important;
+  }
+  
+  &.el-tag--info {
+    background-color: #f4f4f5 !important;
+    border-color: #909399 !important;
+    color: #909399 !important;
+  }
+}
+
+.industrial-dialog :deep(.el-dialog__header) {
+  background: var(--accent-border);
+  .el-dialog__title { color: #fff; font-weight: 800; }
 }
 </style>

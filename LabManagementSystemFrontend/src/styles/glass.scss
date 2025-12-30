@@ -257,15 +257,40 @@ body {
 }
 
 /* Pagination */
-.el-pagination {
+.el-pagination.is-background {
   .el-pager li {
-    background: transparent;
-    border: 1px solid #ddd;
-    border-radius: 0;
+    background: #fff;
+    border: 1px solid var(--accent-border);
+    border-radius: 0px !important; /* Sharp */
+    color: var(--text-main);
+    font-weight: 700;
+    margin: 0 4px;
+    
     &.is-active {
-      background-color: var(--primary-color);
-      border-color: var(--accent-border);
-      color: var(--text-main);
+      background-color: var(--primary-color) !important;
+      border-color: var(--accent-border) !important;
+      color: var(--text-main) !important;
+    }
+    
+    &:hover:not(.is-active) {
+      color: var(--primary-color);
     }
   }
+  
+  .btn-prev, .btn-next {
+    background: #fff;
+    border: 1px solid var(--accent-border);
+    border-radius: 0px !important;
+    color: var(--text-main);
+    
+    &:disabled {
+      background: #f5f7fa;
+      color: #c0c4cc;
+    }
+  }
+}
+
+/* Global Dialog Body Padding */
+.el-dialog__body {
+  padding-top: 20px !important;
 }
