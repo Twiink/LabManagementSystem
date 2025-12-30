@@ -45,7 +45,7 @@ export type NotificationStatus = 'UNREAD' | 'READ'
 /**
  * 审计日志目标类型枚举
  */
-export type AuditTargetType = 'LAB' | 'DEVICE' | 'RESERVATION' | 'USER' | 'COURSE' | 'RULE_CONFIG'
+export type AuditTargetType = 'LAB' | 'DEVICE' | 'RESERVATION' | 'RESERVATION_SERIES' | 'USER' | 'COURSE' | 'RULE_CONFIG'
 
 // ==================== 用户相关类型 ====================
 

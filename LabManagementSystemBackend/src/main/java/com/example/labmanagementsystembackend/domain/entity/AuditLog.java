@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +19,8 @@ public class AuditLog {
     private Long id;
     @Column(name = "actor_id", nullable = false)
     private Long actorId;
+    @Transient
+    private String actorName;
     @Column(name = "action", nullable = false)
     private String action;
     @Column(name = "target_type", nullable = false)
@@ -47,6 +50,14 @@ public class AuditLog {
 
     public void setActorId(Long actorId) {
         this.actorId = actorId;
+    }
+
+    public String getActorName() {
+        return actorName;
+    }
+
+    public void setActorName(String actorName) {
+        this.actorName = actorName;
     }
 
     public String getAction() {

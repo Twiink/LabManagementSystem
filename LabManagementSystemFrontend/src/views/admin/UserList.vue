@@ -240,41 +240,31 @@ const getRoleLabel = (role: string) => {
 </script>
 
 <style scoped lang="scss">
+.users-container {
+  animation: fade-in 0.5s ease-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .action-bar {
-  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  padding: 24px;
+  margin-bottom: 24px;
 }
 
 .pagination-container {
-  margin-top: 20px;
+  margin-top: 24px;
   display: flex;
   justify-content: flex-end;
 }
 
 .user-table {
-  font-size: 14px;
-
-  :deep(.el-table__header) {
-    th {
-      font-size: 15px;
-      font-weight: 600;
-      background-color: #f5f7fa;
-    }
-  }
-
-  :deep(.el-table__body) {
-    td {
-      font-size: 14px;
-      padding: 12px 0;
-    }
-  }
-
   :deep(.el-button) {
-    margin: 0 2px;
-    font-size: 13px;
-
-    &.el-button--small {
-      padding: 7px 12px;
-    }
+    margin: 0 4px;
   }
 }
 </style>

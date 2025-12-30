@@ -18,10 +18,12 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final AuditLogService auditLogService;
 
-    public UserService(UserMapper userMapper, PasswordEncoder passwordEncoder) {
+    public UserService(UserMapper userMapper, PasswordEncoder passwordEncoder, AuditLogService auditLogService) {
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
+        this.auditLogService = auditLogService;
     }
 
     public UserResponse getUserById(Long id) {
@@ -58,23 +60,38 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponse updateUser(Long id, UserUpdateRequest request) {
+    public UserResponse updateUser(Long actorId, Long id, UserUpdateRequest request) {
         User user = getUserEntity(id);
+
+        // 记录变更前的信息用于审计日志
+        String oldRole = user.getRole();
+        String oldStatus = user.getStatus();
+
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
         user.setRole(request.getRole());
         user.setStatus(request.getStatus());
         userMapper.updateUser(user);
+
+        // 记录审计日志
+        String detail = String.format("{\"name\":\"%s\",\"email\":\"%s\",\"role\":\"%s\",\"status\":\"%s\",\"oldRole\":\"%s\",\"oldStatus\":\"%s\"}",
+                user.getName(), user.getEmail(), user.getRole(), user.getStatus(), oldRole, oldStatus);
+        auditLogService.record(actorId, "UPDATE", "USER", id, detail);
+
         return toResponse(userMapper.findById(id));
     }
 
     @Transactional
-    public void resetPassword(Long id) {
+    public void resetPassword(Long actorId, Long id) {
         User user = getUserEntity(id);
         // 重置密码为默认密码: 123456
         String defaultPassword = "123456";
         user.setPasswordHash(passwordEncoder.encode(defaultPassword));
         userMapper.updateUser(user);
+
+        // 记录审计日志
+        String detail = String.format("{\"userId\":%d,\"userName\":\"%s\"}", id, user.getName());
+        auditLogService.record(actorId, "RESET_PASSWORD", "USER", id, detail);
     }
 }

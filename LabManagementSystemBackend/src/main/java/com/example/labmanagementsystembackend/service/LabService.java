@@ -16,9 +16,11 @@ import java.util.stream.Collectors;
 @Service
 public class LabService {
     private final LabMapper labMapper;
+    private final AuditLogService auditLogService;
 
-    public LabService(LabMapper labMapper) {
+    public LabService(LabMapper labMapper, AuditLogService auditLogService) {
         this.labMapper = labMapper;
+        this.auditLogService = auditLogService;
     }
 
     public List<LabResponse> listLabs(String status, String keyword, int page, int pageSize) {
@@ -34,7 +36,7 @@ public class LabService {
         return labMapper.countLabs(status, keyword);
     }
 
-    public LabResponse createLab(LabCreateRequest request) {
+    public LabResponse createLab(Long actorId, LabCreateRequest request) {
         Lab lab = new Lab();
         lab.setName(request.getName());
         lab.setLocation(request.getLocation());
@@ -43,14 +45,26 @@ public class LabService {
         lab.setOpenTimeEnd(request.getOpenTimeEnd());
         lab.setStatus("IDLE");
         labMapper.insertLab(lab);
+
+        // 记录审计日志
+        String detail = String.format("{\"name\":\"%s\",\"location\":\"%s\",\"capacity\":%d}",
+                lab.getName(), lab.getLocation(), lab.getCapacity());
+        auditLogService.record(actorId, "CREATE", "LAB", lab.getId(), detail);
+
         return toResponse(labMapper.findById(lab.getId()));
     }
 
-    public LabResponse updateLab(Long id, LabUpdateRequest request) {
+    public LabResponse updateLab(Long actorId, Long id, LabUpdateRequest request) {
         Lab existing = labMapper.findById(id);
         if (existing == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND, "Lab not found");
         }
+
+        // 记录变更前的信息
+        String oldName = existing.getName();
+        String oldLocation = existing.getLocation();
+        Integer oldCapacity = existing.getCapacity();
+
         existing.setName(request.getName());
         existing.setLocation(request.getLocation());
         existing.setCapacity(request.getCapacity());
@@ -62,15 +76,28 @@ public class LabService {
             existing.setOpenTimeEnd(request.getOpenTimeEnd());
         }
         labMapper.updateLab(existing);
+
+        // 记录审计日志
+        String detail = String.format("{\"name\":\"%s\",\"location\":\"%s\",\"capacity\":%d,\"oldName\":\"%s\",\"oldLocation\":\"%s\",\"oldCapacity\":%d}",
+                existing.getName(), existing.getLocation(), existing.getCapacity(), oldName, oldLocation, oldCapacity);
+        auditLogService.record(actorId, "UPDATE", "LAB", id, detail);
+
         return toResponse(labMapper.findById(id));
     }
 
-    public void updateStatus(Long id, String status) {
+    public void updateStatus(Long actorId, Long id, String status) {
         Lab existing = labMapper.findById(id);
         if (existing == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND, "Lab not found");
         }
+
+        String oldStatus = existing.getStatus();
         labMapper.updateStatus(id, status);
+
+        // 记录审计日志
+        String detail = String.format("{\"labName\":\"%s\",\"newStatus\":\"%s\",\"oldStatus\":\"%s\"}",
+                existing.getName(), status, oldStatus);
+        auditLogService.record(actorId, "UPDATE", "LAB", id, detail);
     }
 
     public Lab getLabEntity(Long id) {

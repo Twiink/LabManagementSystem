@@ -675,14 +675,24 @@ const formatTimeShort = (value: string) => formatTime(value)
 </script>
 
 <style scoped lang="scss">
+.reservations-container {
+  animation: fade-in 0.5s ease-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .action-bar {
   display: flex;
   align-items: center;
-  padding: 15px 20px;
+  padding: 24px;
+  margin-bottom: 24px;
 }
 
 .pagination-container {
-  margin-top: 20px;
+  margin-top: 24px;
   display: flex;
   justify-content: flex-end;
 }
@@ -697,16 +707,33 @@ const formatTimeShort = (value: string) => formatTime(value)
   padding: 10px 0;
 }
 
+:deep(.el-calendar) {
+  background: transparent;
+  --el-calendar-cell-width: 100%;
+}
+
+:deep(.el-calendar-table .el-calendar-day) {
+  height: auto;
+  min-height: 100px;
+  padding: 8px;
+  transition: all 0.2s;
+  
+  &:hover {
+    background-color: rgba(59, 130, 246, 0.05);
+  }
+}
+
 .calendar-cell {
-  min-height: 90px;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .calendar-date {
   font-weight: 600;
-  color: #1f2d3d;
+  color: var(--text-main);
+  margin-bottom: 4px;
 }
 
 .calendar-events {
@@ -718,34 +745,46 @@ const formatTimeShort = (value: string) => formatTime(value)
 .calendar-event {
   font-size: 12px;
   background: rgba(48, 79, 254, 0.08);
-  border-radius: 6px;
-  padding: 2px 6px;
+  border-radius: 4px;
+  padding: 4px 6px;
   display: flex;
   justify-content: space-between;
   gap: 6px;
+  transition: all 0.2s;
+  cursor: pointer;
+  
+  &:hover {
+    transform: translateX(2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
 
   &.event-approved {
-    background: rgba(103, 194, 58, 0.15);
-    border-left: 3px solid #67c23a;
+    background: rgba(16, 185, 129, 0.1);
+    border-left: 3px solid var(--success-color);
   }
 
   &.event-pending {
-    background: rgba(230, 162, 60, 0.15);
-    border-left: 3px solid #e6a23c;
+    background: rgba(245, 158, 11, 0.1);
+    border-left: 3px solid var(--warning-color);
   }
 
   &.event-rejected {
-    background: rgba(245, 108, 108, 0.15);
-    border-left: 3px solid #f56c6c;
+    background: rgba(239, 68, 68, 0.1);
+    border-left: 3px solid var(--danger-color);
   }
 }
 
 .event-title {
-  color: #1f2d3d;
+  color: var(--text-main);
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80px;
 }
 
 .event-time {
-  color: #3f51b5;
+  color: var(--text-regular);
+  font-size: 11px;
 }
 </style>

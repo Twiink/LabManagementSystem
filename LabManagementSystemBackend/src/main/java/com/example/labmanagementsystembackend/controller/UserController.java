@@ -56,17 +56,21 @@ public class UserController extends BaseController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponse<UserResponse> updateUser(@PathVariable Long id,
+    public ApiResponse<UserResponse> updateUser(@AuthenticationPrincipal Jwt jwt,
+                                                @PathVariable Long id,
                                                 @Valid @RequestBody UserUpdateRequest body,
                                                 HttpServletRequest request) {
-        return success(request, userService.updateUser(id, body));
+        Long actorId = SecurityUtil.getUserId(jwt);
+        return success(request, userService.updateUser(actorId, id, body));
     }
 
     @PostMapping("/{id}/reset-password")
     @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponse<Void> resetPassword(@PathVariable Long id,
+    public ApiResponse<Void> resetPassword(@AuthenticationPrincipal Jwt jwt,
+                                           @PathVariable Long id,
                                            HttpServletRequest request) {
-        userService.resetPassword(id);
+        Long actorId = SecurityUtil.getUserId(jwt);
+        userService.resetPassword(actorId, id);
         return success(request, null);
     }
 }

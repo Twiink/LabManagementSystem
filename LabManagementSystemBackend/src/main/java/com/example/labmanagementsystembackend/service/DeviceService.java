@@ -17,10 +17,12 @@ import java.util.stream.Collectors;
 public class DeviceService {
     private final DeviceMapper deviceMapper;
     private final LabService labService;
+    private final AuditLogService auditLogService;
 
-    public DeviceService(DeviceMapper deviceMapper, LabService labService) {
+    public DeviceService(DeviceMapper deviceMapper, LabService labService, AuditLogService auditLogService) {
         this.deviceMapper = deviceMapper;
         this.labService = labService;
+        this.auditLogService = auditLogService;
     }
 
     public List<DeviceResponse> listDevices(Long labId, String status, String keyword, int page, int pageSize) {
@@ -36,7 +38,7 @@ public class DeviceService {
         return deviceMapper.countDevices(labId, status, keyword);
     }
 
-    public DeviceResponse createDevice(DeviceCreateRequest request) {
+    public DeviceResponse createDevice(Long actorId, DeviceCreateRequest request) {
         labService.getLabEntity(request.getLabId());
         Device device = new Device();
         device.setLabId(request.getLabId());
@@ -44,28 +46,53 @@ public class DeviceService {
         device.setModel(request.getModel());
         device.setStatus("IDLE");
         deviceMapper.insertDevice(device);
+
+        // 记录审计日志
+        String detail = String.format("{\"name\":\"%s\",\"model\":\"%s\",\"labId\":%d}",
+                device.getName(), device.getModel(), device.getLabId());
+        auditLogService.record(actorId, "CREATE", "DEVICE", device.getId(), detail);
+
         return toResponse(deviceMapper.findById(device.getId()));
     }
 
-    public DeviceResponse updateDevice(Long id, DeviceUpdateRequest request) {
+    public DeviceResponse updateDevice(Long actorId, Long id, DeviceUpdateRequest request) {
         Device existing = deviceMapper.findById(id);
         if (existing == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND, "Device not found");
         }
         labService.getLabEntity(request.getLabId());
+
+        // 记录变更前的信息
+        String oldName = existing.getName();
+        String oldModel = existing.getModel();
+        Long oldLabId = existing.getLabId();
+
         existing.setLabId(request.getLabId());
         existing.setName(request.getName());
         existing.setModel(request.getModel());
         deviceMapper.updateDevice(existing);
+
+        // 记录审计日志
+        String detail = String.format("{\"name\":\"%s\",\"model\":\"%s\",\"labId\":%d,\"oldName\":\"%s\",\"oldModel\":\"%s\",\"oldLabId\":%d}",
+                existing.getName(), existing.getModel(), existing.getLabId(), oldName, oldModel, oldLabId);
+        auditLogService.record(actorId, "UPDATE", "DEVICE", id, detail);
+
         return toResponse(deviceMapper.findById(id));
     }
 
-    public void updateStatus(Long id, String status) {
+    public void updateStatus(Long actorId, Long id, String status) {
         Device existing = deviceMapper.findById(id);
         if (existing == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND, "Device not found");
         }
+
+        String oldStatus = existing.getStatus();
         deviceMapper.updateStatus(id, status);
+
+        // 记录审计日志
+        String detail = String.format("{\"deviceName\":\"%s\",\"newStatus\":\"%s\",\"oldStatus\":\"%s\"}",
+                existing.getName(), status, oldStatus);
+        auditLogService.record(actorId, "UPDATE", "DEVICE", id, detail);
     }
 
     public Device getDeviceEntity(Long id) {

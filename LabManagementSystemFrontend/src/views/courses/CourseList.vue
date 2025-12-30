@@ -426,12 +426,22 @@ const handleBindSubmit = async () => {
 </script>
 
 <style scoped lang="scss">
+.courses-container {
+  animation: fade-in 0.5s ease-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .action-bar {
-  padding: 15px 20px;
+  padding: 24px;
+  margin-bottom: 24px;
 }
 
 .pagination-container {
-  margin-top: 20px;
+  margin-top: 24px;
   display: flex;
   justify-content: flex-end;
 }
@@ -444,45 +454,52 @@ const handleBindSubmit = async () => {
     th {
       font-size: 15px;
       font-weight: 600;
-      background-color: #f5f7fa;
-    }
-  }
-
-  :deep(.el-table__body) {
-    td {
-      font-size: 14px;
-      padding: 12px 0;
+      background-color: rgba(245, 247, 250, 0.5);
     }
   }
 
   :deep(.el-button) {
-    margin: 0 2px;
-    font-size: 13px;
-
-    &.el-button--small {
-      padding: 7px 12px;
-    }
+    margin: 0 4px;
   }
 }
 
 // 学生课程表卡片样式
 .schedule-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  padding: 10px 0;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  padding: 8px 0;
 }
 
 .schedule-card {
-  background: linear-gradient(135deg, #f5f7fa 0%, #fff 100%);
-  border-radius: 12px;
-  padding: 20px;
-  border: 1px solid #ebeef5;
-  transition: all 0.3s;
+  background: var(--glass-bg);
+  border-radius: var(--border-radius-base);
+  padding: 24px;
+  border: var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
 
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+    box-shadow: var(--glass-shadow-hover);
+    
+    &::before {
+      opacity: 1;
+    }
   }
 }
 
@@ -490,32 +507,36 @@ const handleBindSubmit = async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #ebeef5;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .course-name {
   font-size: 18px;
-  font-weight: 600;
-  color: #303133;
+  font-weight: 700;
+  color: var(--text-main);
 }
 
 .course-info {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .info-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: #606266;
+  gap: 10px;
+  color: var(--text-regular);
   font-size: 14px;
 
   .el-icon {
-    color: #409eff;
+    color: var(--primary-color);
+    font-size: 16px;
+    background: rgba(59, 130, 246, 0.1);
+    padding: 6px;
+    border-radius: 6px;
   }
 }
 </style>

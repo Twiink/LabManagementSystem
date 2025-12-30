@@ -545,14 +545,24 @@ const getStatusLabel = (status: string) => {
 </script>
 
 <style scoped lang="scss">
+.devices-container {
+  animation: fade-in 0.5s ease-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .action-bar {
   display: flex;
   align-items: center;
-  padding: 15px 20px;
+  padding: 24px;
+  margin-bottom: 24px;
 }
 
 .pagination-container {
-  margin-top: 20px;
+  margin-top: 24px;
   display: flex;
   justify-content: flex-end;
 }

@@ -16,23 +16,27 @@
     </el-row>
 
     <!-- Charts Section -->
-    <el-row :gutter="20" class="charts-row">
+    <el-row :gutter="24" class="charts-row">
       <el-col :span="12">
         <div class="glass-card chart-card">
-          <h3>设备状态分布</h3>
+          <div class="chart-header">
+            <h3>设备状态分布</h3>
+          </div>
           <div ref="deviceChartRef" class="chart-container"></div>
         </div>
       </el-col>
       <el-col :span="12">
         <div class="glass-card chart-card">
-          <h3>实验室本周使用频次</h3>
+          <div class="chart-header">
+            <h3>实验室本周使用频次</h3>
+          </div>
           <div ref="labChartRef" class="chart-container"></div>
         </div>
       </el-col>
     </el-row>
 
     <!-- Recent Reservations -->
-    <div class="glass-card" style="margin-top: 20px;">
+    <div class="glass-card table-card">
       <div class="card-header">
         <h3>{{ userStore.isAdmin ? '近期预约' : '我的预约' }}</h3>
         <el-button link type="primary" @click="router.push(reservationRoute)">查看全部</el-button>
@@ -53,7 +57,15 @@
         </el-table-column>
         <el-table-column prop="status" label="状态" width="100">
           <template #default="scope">
-            <el-tag :type="getStatusType(scope.row.status)" effect="dark" round size="small">{{ getStatusLabel(scope.row.status) }}</el-tag>
+            <!-- Updated Tag Style: Flat, Sharp, Custom Colors -->
+            <el-tag 
+              :type="getStatusType(scope.row.status)" 
+              effect="plain" 
+              class="status-tag"
+              size="small"
+            >
+              {{ getStatusLabel(scope.row.status) }}
+            </el-tag>
           </template>
         </el-table-column>
       </el-table>
@@ -91,7 +103,7 @@ const stats = reactive({
 
 // 根据角色显示不同的统计项
 const allStatItems = ref([
-  { label: '实验室总数', value: 0, icon: 'OfficeBuilding', bgClass: 'bg-blue', route: '', roles: ['ADMIN', 'TEACHER', 'STUDENT'] },
+  { label: '实验室总数', value: 0, icon: 'OfficeBuilding', bgClass: 'bg-primary', route: '', roles: ['ADMIN', 'TEACHER', 'STUDENT'] },
   { label: '设备总数', value: 0, icon: 'Monitor', bgClass: 'bg-green', route: '', roles: ['ADMIN', 'TEACHER', 'STUDENT'] },
   { label: '我的预约', value: 0, icon: 'Calendar', bgClass: 'bg-orange', route: '/my-reservations', roles: ['TEACHER', 'STUDENT'] },
   { label: '当前预约', value: 0, icon: 'Calendar', bgClass: 'bg-orange', route: '/reservations', roles: ['ADMIN'] },
@@ -256,7 +268,7 @@ const initCharts = () => {
           name: '预约次数',
           type: 'bar',
           barWidth: '60%',
-          itemStyle: { borderRadius: [5, 5, 0, 0], color: '#409eff' },
+          itemStyle: { borderRadius: [0, 0, 0, 0], color: '#FFC085' },
           data: [12, 8, 15, 10, 14, 3, 2]
         }
       ]
@@ -268,17 +280,17 @@ const updateCharts = () => {
   if (deviceChart) {
     deviceChart.setOption({
       tooltip: { trigger: 'item' },
-      legend: { bottom: '0%', left: 'center' },
-      color: ['#67c23a', '#e6a23c', '#409eff', '#f56c6c'],
+      legend: { bottom: '0%', left: 'center', textStyle: { color: '#4A403A' } },
+      color: ['#FFC085', '#E68A2E', '#9D8D85', '#D4A373'],
       series: [
         {
           name: '设备状态',
           type: 'pie',
           radius: ['40%', '70%'],
           avoidLabelOverlap: false,
-          itemStyle: { borderRadius: 10, borderColor: '#fff', borderWidth: 2 },
+          itemStyle: { borderRadius: 0, borderColor: '#fff', borderWidth: 2 },
           label: { show: false, position: 'center' },
-          emphasis: { label: { show: true, fontSize: 20, fontWeight: 'bold' } },
+          emphasis: { label: { show: true, fontSize: 18, fontWeight: 'bold' } },
           data: [
             { value: deviceStats.idle, name: '空闲' },
             { value: deviceStats.inUse, name: '使用中' },
@@ -346,66 +358,121 @@ const formatDateTimeShort = (dateStr: string) => formatDateTime(dateStr, {
 </script>
 
 <style scoped lang="scss">
+.dashboard-container {
+  animation: fade-in 0.5s ease-out;
+  padding-bottom: 40px;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .stat-card {
   display: flex;
   align-items: center;
-  padding: 25px;
+  padding: 24px;
   cursor: pointer;
-  transition: all 0.3s;
-  background: rgba(255, 255, 255, 0.85);
+  height: 100%;
+  background: #fff;
+  border: 1px solid var(--accent-border);
+  box-shadow: var(--glass-shadow);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(64, 158, 255, 0.2);
+    transform: translate(-4px, -4px);
+    box-shadow: var(--glass-shadow-hover);
+    
+    .icon-wrapper {
+      transform: scale(1.1);
+    }
   }
 
   .icon-wrapper {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    border-radius: 0px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 28px;
+    font-size: 24px;
     color: white;
     margin-right: 20px;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    border: 1px solid var(--accent-border);
 
-    &.bg-blue { background: linear-gradient(135deg, #409eff, #8cc5ff); box-shadow: 0 4px 10px rgba(64, 158, 255, 0.4); }
-    &.bg-green { background: linear-gradient(135deg, #67c23a, #95d475); box-shadow: 0 4px 10px rgba(103, 194, 58, 0.4); }
-    &.bg-orange { background: linear-gradient(135deg, #e6a23c, #f3d19e); box-shadow: 0 4px 10px rgba(230, 162, 60, 0.4); }
-    &.bg-red { background: linear-gradient(135deg, #f56c6c, #fab6b6); box-shadow: 0 4px 10px rgba(245, 108, 108, 0.4); }
+    &.bg-primary { 
+      background: var(--primary-color);
+      box-shadow: 2px 2px 0px var(--accent-border); 
+      color: var(--text-main);
+    }
+    &.bg-green { 
+      background: #10b981; 
+      box-shadow: 2px 2px 0px var(--accent-border); 
+    }
+    &.bg-orange { 
+      background: #f59e0b; 
+      box-shadow: 2px 2px 0px var(--accent-border); 
+    }
+    &.bg-red { 
+      background: #ef4444; 
+      box-shadow: 2px 2px 0px var(--accent-border); 
+    }
   }
 
   .content {
     .value {
-      font-size: 30px;
+      font-size: 32px;
       font-weight: 800;
-      color: #2c3e50;
-      line-height: 1.2;
+      color: var(--text-main);
+      line-height: 1;
+      margin-bottom: 4px;
+      font-family: 'JetBrains Mono', monospace;
     }
     .label {
-      font-size: 14px;
-      color: #909399;
-      font-weight: 500;
+      font-size: 13px;
+      color: var(--text-light);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
   }
 }
 
 .charts-row {
-  margin-top: 20px;
+  margin-top: 70px;
 }
 
 .chart-card {
-  height: 400px;
-  background: rgba(255, 255, 255, 0.85);
+  height: 420px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-
-  h3 {
-    margin: 0 0 20px;
-    color: #2c3e50;
+  background: #fff;
+  border: 1px solid var(--accent-border);
+  box-shadow: var(--glass-shadow);
+  
+  .chart-header h3 {
+    margin: 0 0 24px;
+    color: var(--text-main);
     font-size: 18px;
-    font-weight: 600;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    text-transform: uppercase;
+    
+    &::before {
+      content: '';
+      display: block;
+      width: 8px;
+      height: 18px;
+      background: var(--primary-color);
+      margin-right: 12px;
+      border: 1px solid var(--accent-border);
+    }
   }
 }
 
@@ -415,16 +482,90 @@ const formatDateTimeShort = (dateStr: string) => formatDateTime(dateStr, {
   height: 100%;
 }
 
+.table-card {
+  margin-top: 40px;
+  padding: 24px;
+}
+
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 
   h3 {
     margin: 0;
     font-size: 18px;
-    color: #2c3e50;
+    color: var(--text-main);
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+}
+
+/* Updated Status Tag Style */
+.status-tag {
+  border-radius: 0px !important;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  border-width: 1px;
+  padding: 0 8px;
+  height: 22px;
+  line-height: 20px;
+  
+  &.el-tag--success {
+    background-color: rgba(16, 185, 129, 0.1) !important;
+    border-color: #10b981 !important;
+    color: #10b981 !important;
+  }
+  
+  &.el-tag--warning {
+    background-color: rgba(245, 158, 11, 0.1) !important;
+    border-color: #f59e0b !important;
+    color: #f59e0b !important;
+  }
+  
+  &.el-tag--danger {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+    border-color: #ef4444 !important;
+    color: #ef4444 !important;
+  }
+  
+  &.el-tag--primary {
+    background-color: rgba(255, 192, 133, 0.1) !important;
+    border-color: var(--accent-border) !important;
+    color: var(--text-main) !important;
+  }
+  
+  &.el-tag--info {
+    background-color: #f4f4f5 !important;
+    border-color: #909399 !important;
+    color: #909399 !important;
+  }
+}
+
+/* Stagger Animation */
+.el-col {
+  opacity: 0;
+  animation: slide-up-fade 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@for $i from 1 through 6 {
+  .el-col:nth-child(#{$i}) {
+    animation-delay: #{$i * 0.1}s;
+  }
+}
+
+@keyframes slide-up-fade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 </style>

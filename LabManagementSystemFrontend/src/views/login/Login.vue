@@ -1,112 +1,150 @@
 <template>
   <div class="login-container">
-    <!-- 背景装饰 -->
-    <div class="bg-decoration">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-      <div class="circle circle-3"></div>
-    </div>
+    <div class="login-box">
+      <!-- Left: Visual Identity - RESTORED TO 45% -->
+      <div class="visual-side">
+        <div class="visual-content">
+          <div class="top-section">
+            <div class="logo-group">
+              <div class="logo-square">
+                <el-icon><Monitor /></el-icon>
+              </div>
+              <span class="app-name">LAB·OS</span>
+            </div>
+            
+            <div class="hero-text">
+              <div class="tag-line">PRECISION · CONTROL</div>
+              <h2>实验室综合管理系统</h2>
+              <p>Professional Laboratory Management Platform</p>
+            </div>
+          </div>
 
-    <div class="login-card">
-      <!-- 左侧装饰区域 -->
-      <div class="card-left">
-        <div class="brand-content">
-          <div class="logo-wrapper">
-            <el-icon class="logo-icon"><Monitor /></el-icon>
-          </div>
-          <h1>智能实验室管理系统</h1>
-          <p>Laboratory Management System</p>
-          <div class="features">
-            <div class="feature-item">
-              <el-icon><Calendar /></el-icon>
-              <span>智能预约</span>
+          <!-- System Dashboard - 3 Progress Bars -->
+          <div class="system-dashboard">
+            <div class="dashboard-header">SYSTEM_METRICS</div>
+            <div class="monitor-row">
+              <span class="key">ACTIVE_LABS</span>
+              <div class="progress-track"><div class="progress-fill" style="width: 75%"></div></div>
+              <span class="val">12/16</span>
             </div>
-            <div class="feature-item">
-              <el-icon><DataAnalysis /></el-icon>
-              <span>设备管理</span>
+            <div class="monitor-row">
+              <span class="key">DEVICE_LOAD</span>
+              <div class="progress-track"><div class="progress-fill" style="width: 42%"></div></div>
+              <span class="val">42%</span>
             </div>
-            <div class="feature-item">
-              <el-icon><UserFilled /></el-icon>
-              <span>权限控制</span>
+            <div class="monitor-row">
+              <span class="key">GATEWAY</span>
+              <div class="progress-track"><div class="progress-fill" style="width: 100%"></div></div>
+              <span class="val">SECURE</span>
             </div>
           </div>
+
+          <!-- Terminal Log with Cursor -->
+          <div class="terminal-log">
+            <div class="log-line">> INITIALIZING_CORE_MODULES...</div>
+            <div class="log-line">> CONNECTING_TO_DATABASE... [OK]</div>
+            <div class="log-line">> CHECKING_PERMISSIONS... [OK]</div>
+            <div class="log-line">> SYSTEM_READY_FOR_AUTH_</div>
+            <div class="cursor-blink"></div>
+          </div>
+
+          <div class="tech-specs">
+            <div class="spec-row">
+              <span class="label">VERSION</span>
+              <span class="value">2.4.0 (Stable)</span>
+            </div>
+            <div class="spec-row">
+              <span class="label">STATUS</span>
+              <span class="value status-ok">● SYSTEM ONLINE</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="geo-pattern">
+          <div class="line line-1"></div>
+          <div class="line line-2"></div>
+          <div class="circle-outline"></div>
         </div>
       </div>
 
-      <!-- 右侧登录表单 -->
-      <div class="card-right">
-        <div class="form-header">
-          <h2>欢迎回来</h2>
-          <p>请选择身份并登录您的账户</p>
-        </div>
+      <!-- Right: Auth Form -->
+      <div class="auth-side">
+        <div class="side-scroll-area">
+          <div class="auth-header">
+            <h2>用户登录</h2>
+          </div>
 
-        <!-- 身份选择选项卡 -->
-        <div class="role-tabs">
-          <div
-            v-for="role in roles"
-            :key="role.value"
-            class="role-tab"
-            :class="{ active: selectedRole === role.value }"
-            @click="selectedRole = role.value"
+          <!-- Role Slider -->
+          <div class="role-selector-frame">
+            <div class="role-slider-track">
+              <div 
+                class="slider-block"
+                :style="{ left: `${activeRoleIndex * 33.33}%` }"
+              ></div>
+              <div 
+                v-for="(role, index) in roles" 
+                :key="role.value"
+                class="role-option"
+                :class="{ active: selectedRole === role.value }"
+                @click="switchRole(role.value, index)"
+              >
+                {{ role.label }}
+              </div>
+            </div>
+          </div>
+
+          <el-form
+            :model="form"
+            ref="formRef"
+            :rules="rules"
+            size="large"
+            class="auth-form"
+            @keyup.enter="handleLogin"
           >
-            <el-icon :size="24"><component :is="role.icon" /></el-icon>
-            <span>{{ role.label }}</span>
-          </div>
-        </div>
+            <el-form-item prop="username">
+              <div class="input-wrapper">
+                <span class="input-label">用户名 / USERNAME</span>
+                <el-input
+                  v-model="form.username"
+                  placeholder="请输入学号/工号/账号"
+                  class="minimal-input"
+                />
+              </div>
+            </el-form-item>
 
-        <el-form
-          :model="form"
-          ref="formRef"
-          :rules="rules"
-          size="large"
-          class="login-form"
-          :validate-on-rule-change="false"
-          @keyup.enter="handleLogin"
-        >
-          <el-form-item prop="username">
-            <el-input
-              v-model="form.username"
-              placeholder="请输入用户名"
-              :prefix-icon="User"
-              clearable
-            />
-          </el-form-item>
+            <el-form-item prop="password">
+              <div class="input-wrapper">
+                <span class="input-label">密 码 / PASSWORD</span>
+                <el-input
+                  v-model="form.password"
+                  type="password"
+                  placeholder="请输入安全密码"
+                  show-password
+                  class="minimal-input"
+                />
+              </div>
+            </el-form-item>
 
-          <el-form-item prop="password">
-            <el-input
-              v-model="form.password"
-              type="password"
-              placeholder="请输入密码"
-              :prefix-icon="Lock"
-              show-password
-            />
-          </el-form-item>
+            <div class="auth-actions">
+              <el-checkbox v-model="rememberMe" class="mono-checkbox">保持登录状态</el-checkbox>
+              <el-link :underline="true" class="mono-link">忘记密码?</el-link>
+            </div>
 
-          <div class="form-options">
-            <el-checkbox v-model="rememberMe">记住我</el-checkbox>
-            <el-link type="primary" :underline="false">忘记密码？</el-link>
-          </div>
-
-          <el-form-item>
-            <el-button
-              type="primary"
-              :loading="loading"
-              class="login-btn"
+            <button
+              type="button"
+              class="mono-btn"
+              :class="{ 'is-loading': loading }"
               @click="handleLogin"
             >
-              {{ loading ? '登录中...' : '登 录' }}
-            </el-button>
-          </el-form-item>
-        </el-form>
+              <span v-if="!loading">确 认 登 录</span>
+              <span v-else>正在建立安全连接...</span>
+              <el-icon v-if="!loading" class="arrow"><Right /></el-icon>
+            </button>
+          </el-form>
 
-        <div class="form-footer">
-          <span>还没有账号？</span>
-          <el-link type="primary" @click="router.push('/register')">立即注册</el-link>
-          <span class="hint">（仅支持学生注册）</span>
-        </div>
-
-        <div class="copyright">
-          © 2024 智能实验室管理系统 版权所有
+          <div class="auth-footer">
+            <span class="reg-link" @click="router.push('/register')">注册学生账号 -></span>
+          </div>
         </div>
       </div>
     </div>
@@ -119,17 +157,7 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '@/store/user'
 import { login } from '@/api/auth'
 import { ElMessage } from 'element-plus'
-import {
-  User,
-  Lock,
-  Monitor,
-  Calendar,
-  DataAnalysis,
-  UserFilled,
-  Avatar,
-  Reading,
-  Setting
-} from '@element-plus/icons-vue'
+import { Monitor, Right } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -138,12 +166,18 @@ const loading = ref(false)
 const rememberMe = ref(false)
 const formRef = ref()
 const selectedRole = ref('STUDENT')
+const activeRoleIndex = ref(0)
 
 const roles = [
-  { value: 'STUDENT', label: '学生', icon: Reading },
-  { value: 'TEACHER', label: '教师', icon: Avatar },
-  { value: 'ADMIN', label: '管理员', icon: Setting }
+  { value: 'STUDENT', label: '学生' },
+  { value: 'TEACHER', label: '教师' },
+  { value: 'ADMIN', label: '管理员' }
 ]
+
+const switchRole = (value: string, index: number) => {
+  selectedRole.value = value
+  activeRoleIndex.value = index
+}
 
 const form = reactive({
   username: '',
@@ -152,30 +186,34 @@ const form = reactive({
 
 const rules = {
   username: [
-    { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 2, max: 50, message: '用户名长度为 2-50 个字符', trigger: 'blur' }
+    { required: true, message: '请输入用户名', trigger: 'blur' }
   ],
   password: [
-    { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, max: 100, message: '密码长度不能少于 6 个字符', trigger: 'blur' }
+    { required: true, message: '请输入密码', trigger: 'blur' }
   ]
 }
 
 const handleLogin = async () => {
+  console.log('Login button clicked')
   if (!formRef.value) return
 
   await formRef.value.validate(async (valid: boolean) => {
+    console.log('Form validation result:', valid)
     if (!valid) return
 
     loading.value = true
     try {
+      console.log('Sending login request...', {
+        username: form.username,
+        role: selectedRole.value
+      })
       const res = await login({
         username: form.username,
         password: form.password,
         role: selectedRole.value
       })
+      console.log('Login successful:', res)
 
-      // 保存 token 和用户信息
       userStore.setToken(res.data.accessToken)
       userStore.setUserInfo({
         id: res.data.user.id,
@@ -185,14 +223,14 @@ const handleLogin = async () => {
         status: res.data.user.status || 'ACTIVE'
       })
 
-      ElMessage.success(`登录成功，欢迎 ${res.data.user.name}`)
-
-      // 跳转到首页或重定向页面
+      ElMessage.success({
+        message: `欢迎回来，${res.data.user.name}`,
+        plain: true,
+      })
       const redirect = router.currentRoute.value.query.redirect as string
       router.push(redirect || '/dashboard')
     } catch (error: any) {
-      // 错误已在 request.ts 拦截器中统一处理
-      console.error('登录失败:', error)
+      console.error('Login failed:', error)
     } finally {
       loading.value = false
     }
@@ -201,371 +239,227 @@ const handleLogin = async () => {
 </script>
 
 <style scoped lang="scss">
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;600;800&display=swap');
+
+$bg-color: #FFF7F0;
+$text-main: #4A403A;
+$text-light: #9D8D85;
+$accent-color: #FFC085;
+$accent-dark: #8C6B5D;
+
 .login-container {
   min-height: 100vh;
   width: 100vw;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  position: relative;
-  overflow: hidden;
+  background-color: #f8f8f8;
+  background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
+  background-size: 20px 20px;
+  font-family: 'Inter', sans-serif;
+  padding: 40px 20px;
+  box-sizing: border-box;
 }
 
-// 背景装饰圆
-.bg-decoration {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-
-  .circle {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-    animation: float 20s infinite ease-in-out;
-  }
-
-  .circle-1 {
-    width: 400px;
-    height: 400px;
-    top: -100px;
-    left: -100px;
-    animation-delay: 0s;
-  }
-
-  .circle-2 {
-    width: 300px;
-    height: 300px;
-    bottom: -50px;
-    right: -50px;
-    animation-delay: -5s;
-  }
-
-  .circle-3 {
-    width: 200px;
-    height: 200px;
-    top: 50%;
-    right: 20%;
-    animation-delay: -10s;
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translate(0, 0) scale(1);
-  }
-  25% {
-    transform: translate(30px, -30px) scale(1.05);
-  }
-  50% {
-    transform: translate(-20px, 20px) scale(0.95);
-  }
-  75% {
-    transform: translate(20px, 10px) scale(1.02);
-  }
-}
-
-// 登录卡片
-.login-card {
+.login-box {
   display: flex;
-  width: 800px;
-  min-height: 550px;
-  background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.1),
-    inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  width: 1100px;
+  height: 760px;
+  background: #ffffff;
+  border: 1px solid $accent-dark;
+  box-shadow: 12px 12px 0px $accent-dark;
   overflow: hidden;
-  position: relative;
-  z-index: 10;
 }
 
-// 左侧装饰区域
-.card-left {
-  width: 40%;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
-  padding: 40px;
+/* RESTORED TO 45% */
+.visual-side {
+  width: 45%;
+  min-width: 400px;
+  background: $bg-color;
+  color: $text-main;
+  padding: 60px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  border-right: 1px solid rgba($accent-dark, 0.2);
+}
+
+.visual-content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.top-section { margin-bottom: auto; }
+
+.logo-group {
   display: flex;
   align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  backdrop-filter: blur(10px);
+  gap: 16px;
+  margin-bottom: 60px;
 
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  }
-}
-
-.brand-content {
-  text-align: center;
-  color: white;
-  position: relative;
-  z-index: 1;
-
-  .logo-wrapper {
-    width: 80px;
-    height: 80px;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
+  .logo-square {
+    width: 48px;
+    height: 48px;
+    background: $accent-color;
+    color: #fff; 
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 24px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-
-    .logo-icon {
-      font-size: 40px;
-    }
-  }
-
-  h1 {
     font-size: 24px;
-    font-weight: 600;
-    margin: 0 0 8px;
-    letter-spacing: 1px;
+    font-weight: bold;
+    border: 1px solid $accent-dark;
   }
 
-  p {
-    font-size: 13px;
-    opacity: 0.8;
-    margin: 0 0 40px;
-    letter-spacing: 2px;
+  .app-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: $text-main;
   }
 }
 
-.features {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.hero-text {
+  h1 {
+    font-size: 56px;
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 0 0 24px;
+    letter-spacing: -2px;
+    color: #2c2420;
+  }
+  
+  p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    color: $text-main;
+    opacity: 0.8;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 400px;
+  }
+}
 
-  .feature-item {
+.system-dashboard {
+  margin-top: auto;
+  margin-bottom: 40px;
+  border-left: 2px solid rgba($accent-dark, 0.2);
+  padding-left: 20px;
+  
+  .dashboard-header {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: $text-light;
+    margin-bottom: 16px;
+  }
+  
+  .monitor-row {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 20px;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.3s ease;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.25);
-      transform: translateX(5px);
-    }
-
-    .el-icon {
-      font-size: 20px;
-    }
-
-    span {
-      font-size: 14px;
-      font-weight: 500;
-    }
+    margin-bottom: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: $text-main;
+    .key { width: 100px; color: $text-light; }
+    .progress-track { flex: 1; height: 6px; background: rgba($accent-dark, 0.1); margin: 0 16px; }
+    .progress-fill { height: 100%; background: $accent-color; }
+    .val { width: 50px; text-align: right; font-weight: 600; }
   }
 }
 
-// 右侧表单区域
-.card-right {
+.terminal-log {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: $text-light;
+  margin-bottom: 40px;
+  .cursor-blink {
+    display: inline-block;
+    width: 8px; height: 14px;
+    background: $text-main;
+    animation: blink 1s infinite;
+    vertical-align: middle;
+  }
+}
+
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+.tech-specs {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  border-top: 1px solid rgba($accent-dark, 0.1);
+  padding-top: 20px;
+  .spec-row { display: flex; justify-content: space-between; margin-bottom: 8px; color: $text-main; }
+  .label { opacity: 0.6; }
+}
+
+.geo-pattern {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.08; pointer-events: none;
+  .line { position: absolute; background: $accent-dark; }
+  .line-1 { width: 1px; height: 100%; left: 30%; }
+  .line-2 { width: 100%; height: 1px; top: 40%; }
+}
+
+.auth-side {
   flex: 1;
-  padding: 40px 50px;
+  background: #fff;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.side-scroll-area {
+  padding: 60px 50px; /* Kept narrow padding for wide inputs */
+  overflow-y: auto;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.2);
+  &::-webkit-scrollbar { display: none; }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-.form-header {
-  margin-bottom: 24px;
+.auth-header { margin-bottom: 48px; h2 { font-size: 32px; font-weight: 800; color: #000; } }
 
-  h2 {
-    font-size: 26px;
-    font-weight: 700;
-    color: #2d3748;
-    margin: 0 0 8px;
-  }
+.role-selector-frame { margin-bottom: 48px; border: 1px solid $accent-dark; padding: 4px; }
+.role-slider-track { display: flex; position: relative; background: #fafafa; height: 60px; }
+.role-option { flex: 1; display: flex; align-items: center; justify-content: center; z-index: 2; cursor: pointer; font-size: 16px; font-weight: 600; color: #666; &.active { color: $text-main; font-weight: 800; } }
+.slider-block { position: absolute; top: 0; bottom: 0; width: 33.33%; background: $accent-color; border: 1px solid $accent-dark; box-sizing: border-box; transition: left 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); z-index: 1; }
 
-  p {
-    font-size: 14px;
-    color: #4a5568;
-    margin: 0;
-  }
-}
-
-// 身份选择选项卡
-.role-tabs {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 24px;
-
-  .role-tab {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px solid rgba(229, 231, 235, 0.5);
-    background: rgba(255, 255, 255, 0.3);
-    cursor: pointer;
-    transition: all 0.3s ease;
-
-    span {
-      font-size: 13px;
-      font-weight: 500;
-      color: #4a5568;
-    }
-
-    .el-icon {
-      color: #718096;
-    }
-
-    &:hover {
-      border-color: #667eea;
-      background: rgba(102, 126, 234, 0.1);
-    }
-
-    &.active {
-      border-color: #667eea;
-      background: rgba(102, 126, 234, 0.15);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
-
-      span {
-        color: #667eea;
-        font-weight: 600;
-      }
-
-      .el-icon {
-        color: #667eea;
-      }
-    }
-  }
-}
-
-.login-form {
-  :deep(.el-form-item) {
-    margin-bottom: 20px;
-  }
-
-  :deep(.el-input__wrapper) {
-    padding: 4px 15px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.4);
-    box-shadow: 0 0 0 1px rgba(229, 231, 235, 0.5) inset;
-    transition: all 0.3s ease;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.6);
-      box-shadow: 0 0 0 1px #667eea inset;
-    }
-
-    &.is-focus {
-      background: rgba(255, 255, 255, 0.8);
-      box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.3) inset;
-    }
-  }
-
-  :deep(.el-input__inner) {
-    height: 44px;
-    font-size: 15px;
-    color: #2d3748;
-  }
-
-  :deep(.el-input__prefix) {
-    font-size: 18px;
-    color: #718096;
-  }
-}
-
-.form-options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-
-  :deep(.el-checkbox__label) {
-    color: #4a5568;
-  }
-}
-
-.login-btn {
+.input-wrapper {
   width: 100%;
-  height: 50px;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: none;
-  letter-spacing: 4px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 6px;
+  margin-bottom: 16px;
+  transition: border-color 0.3s;
+  &:focus-within { border-color: $accent-color; }
+  .input-label { display: block; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #888; margin-bottom: 8px; font-weight: 700; }
 }
 
-.form-footer {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 14px;
-  color: #4a5568;
+.minimal-input :deep(.el-input__inner) { font-size: 17px; color: #000; height: 45px; }
 
-  .el-link {
-    margin-left: 4px;
-    font-weight: 500;
-  }
+.auth-actions { display: flex; justify-content: space-between; align-items: center; margin: 24px 0 40px; }
+.mono-checkbox { :deep(.el-checkbox__input.is-checked .el-checkbox__inner) { background-color: $accent-color; border-color: $accent-dark; } }
 
-  .hint {
-    font-size: 12px;
-    color: #718096;
-    margin-left: 4px;
-  }
+.mono-btn {
+  width: 100%;
+  max-width: 420px;
+  height: 64px; 
+  background: $accent-color; 
+  color: $text-main; 
+  border: 1px solid $accent-dark; 
+  font-size: 16px; font-weight: 800;
+  display: flex; justify-content: space-between; align-items: center; padding: 0 32px;
+  cursor: pointer;
+  transition: all 0.2s;
+  &:hover { background: #ffb066; padding-right: 24px; box-shadow: 6px 6px 0px rgba($accent-dark, 0.2); }
 }
 
-// 底部版权
-.copyright {
-  text-align: center;
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(229, 231, 235, 0.5);
-  font-size: 12px;
-  color: #718096;
-}
+.auth-footer { margin-top: 48px; text-align: center; .reg-link { font-size: 14px; color: #666; cursor: pointer; font-weight: 600; &:hover { color: $accent-color; } } }
 
-// 响应式适配
-@media (max-width: 968px) {
-  .login-card {
-    width: 90%;
-    max-width: 420px;
-    flex-direction: column;
-  }
-
-  .card-left {
-    display: none;
-  }
-
-  .card-right {
-    padding: 40px 30px;
-  }
-
-  .role-tabs .role-tab {
-    padding: 12px 8px;
-  }
-}
+@media (max-width: 1024px) { .login-box { width: 95vw; flex-direction: column; } .visual-side { display: none; } .mono-btn { max-width: 100%; } }
 </style>

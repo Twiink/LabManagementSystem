@@ -15,22 +15,39 @@
         <result column="updated_at" property="updatedAt" />
     </resultMap>
 
+    <resultMap id="AuditLogWithActorMap" type="com.example.labmanagementsystembackend.domain.entity.AuditLog">
+        <id column="id" property="id" />
+        <result column="actor_id" property="actorId" />
+        <result column="actor_name" property="actorName" />
+        <result column="action" property="action" />
+        <result column="target_type" property="targetType" />
+        <result column="target_id" property="targetId" />
+        <result column="detail" property="detail" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+    </resultMap>
+
     <insert id="insertLog" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO audit_logs (actor_id, action, target_type, target_id, detail, is_deleted)
-        VALUES (#{actorId}, #{action}, #{targetType}, #{targetId}, #{detail}, #{isDeleted})
+        INSERT INTO audit_logs (actor_id, action, target_type, target_id, detail, is_deleted, created_at, updated_at)
+        VALUES (#{actorId}, #{action}, #{targetType}, #{targetId}, #{detail}, #{isDeleted}, #{createdAt}, #{updatedAt})
     </insert>
 
-    <select id="findLogs" resultMap="AuditLogMap">
-        SELECT * FROM audit_logs
+    <select id="findLogs" resultMap="AuditLogWithActorMap">
+        SELECT
+            al.*,
+            u.name as actor_name
+        FROM audit_logs al
+        LEFT JOIN users u ON al.actor_id = u.id AND u.is_deleted = 0
         <where>
-            AND is_deleted = 0
-            <if test="actorId != null">AND actor_id = #{actorId}</if>
-            <if test="targetType != null and targetType != ''">AND target_type = #{targetType}</if>
-            <if test="targetId != null">AND target_id = #{targetId}</if>
-            <if test="fromTime != null">AND created_at &gt;= #{fromTime}</if>
-            <if test="toTime != null">AND created_at &lt;= #{toTime}</if>
+            AND al.is_deleted = 0
+            <if test="actorId != null">AND al.actor_id = #{actorId}</if>
+            <if test="targetType != null and targetType != ''">AND al.target_type = #{targetType}</if>
+            <if test="targetId != null">AND al.target_id = #{targetId}</if>
+            <if test="fromTime != null">AND al.created_at &gt;= #{fromTime}</if>
+            <if test="toTime != null">AND al.created_at &lt;= #{toTime}</if>
         </where>
-        ORDER BY id DESC
+        ORDER BY al.id DESC
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
 

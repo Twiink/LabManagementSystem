@@ -27,6 +27,8 @@ public class AuditLogService {
         log.setTargetType(targetType);
         log.setTargetId(targetId);
         log.setDetail(detail);
+        log.setCreatedAt(LocalDateTime.now());
+        log.setUpdatedAt(LocalDateTime.now());
         auditLogMapper.insertLog(log);
     }
 
@@ -50,7 +52,7 @@ public class AuditLogService {
     }
 
     private static AuditLogResponse toResponse(AuditLog log) {
-        return new AuditLogResponse(log.getId(), log.getActorId(), log.getAction(), log.getTargetType(), log.getTargetId(),
+        return new AuditLogResponse(log.getId(), log.getActorId(), log.getActorName(), log.getAction(), log.getTargetType(), log.getTargetId(),
                 log.getDetail(), TimeUtil.fromUtcLocalDateTime(log.getCreatedAt()));
     }
 }

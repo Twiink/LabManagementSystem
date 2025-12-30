@@ -9,7 +9,7 @@
               v-model="selectedLabId"
               placeholder="全部实验室"
               clearable
-              style="width: 200px"
+              class="industrial-select"
               @change="handleLabChange"
             >
               <el-option
@@ -23,18 +23,27 @@
         </el-form>
       </div>
       <div class="filter-center">
-        <el-button-group>
-          <el-button @click="handlePrev" :icon="ArrowLeft" />
-          <el-button @click="handleToday">今天</el-button>
-          <el-button @click="handleNext" :icon="ArrowRight" />
-        </el-button-group>
+        <div class="nav-group">
+          <el-button @click="handlePrev" :icon="ArrowLeft" class="nav-btn" />
+          <el-button @click="handleToday" class="nav-btn today-btn">今天</el-button>
+          <el-button @click="handleNext" :icon="ArrowRight" class="nav-btn" />
+        </div>
         <span class="current-month">{{ currentMonthText }}</span>
       </div>
       <div class="filter-right">
-        <el-radio-group v-model="viewMode" size="small">
-          <el-radio-button label="month">月</el-radio-button>
-          <el-radio-button label="week">周</el-radio-button>
-        </el-radio-group>
+        <!-- Replaced radio-group with a custom industrial switcher -->
+        <div class="mode-switcher">
+          <div 
+            class="mode-item" 
+            :class="{ active: viewMode === 'month' }"
+            @click="viewMode = 'month'"
+          >月视图</div>
+          <div 
+            class="mode-item" 
+            :class="{ active: viewMode === 'week' }"
+            @click="viewMode = 'week'"
+          >周视图</div>
+        </div>
       </div>
     </div>
 
@@ -86,7 +95,7 @@
                 <span class="event-name">{{ event.title }}</span>
               </div>
               <div v-if="day.events.length > 3" class="more-link" @click.stop="showDayEvents(day)">
-                还有 {{ day.events.length - 3 }} 项...
+                + 还有 {{ day.events.length - 3 }} 项
               </div>
             </div>
           </div>
@@ -126,7 +135,7 @@
     </div>
 
     <!-- 预约详情弹窗 -->
-    <el-dialog v-model="detailVisible" title="预约详情" width="450px">
+    <el-dialog v-model="detailVisible" title="预约详情" width="450px" class="industrial-dialog" :show-close="false">
       <el-descriptions :column="1" border>
         <el-descriptions-item label="预约事项">{{ currentEvent.title }}</el-descriptions-item>
         <el-descriptions-item label="实验室">{{ currentEvent.labName }}</el-descriptions-item>
@@ -134,7 +143,7 @@
         <el-descriptions-item label="开始时间">{{ formatDateTime(currentEvent.startTime) }}</el-descriptions-item>
         <el-descriptions-item label="结束时间">{{ formatDateTime(currentEvent.endTime) }}</el-descriptions-item>
         <el-descriptions-item label="状态">
-          <el-tag :type="getStatusTagType(currentEvent.status)">{{ getStatusText(currentEvent.status) }}</el-tag>
+          <el-tag :type="getStatusTagType(currentEvent.status)" effect="plain" class="status-tag">{{ getStatusText(currentEvent.status) }}</el-tag>
         </el-descriptions-item>
       </el-descriptions>
       <template #footer>
@@ -144,7 +153,7 @@
     </el-dialog>
 
     <!-- 某日全部预约弹窗 -->
-    <el-dialog v-model="dayEventsVisible" :title="dayEventsTitle" width="600px">
+    <el-dialog v-model="dayEventsVisible" :title="dayEventsTitle" width="600px" class="industrial-dialog" :show-close="false">
       <el-table :data="dayEventsList" style="width: 100%">
         <el-table-column prop="title" label="预约事项" />
         <el-table-column prop="labName" label="实验室" width="120" />
@@ -153,9 +162,9 @@
             {{ formatTime(row.startTime) }} - {{ formatTime(row.endTime) }}
           </template>
         </el-table-column>
-        <el-table-column label="状态" width="90">
+        <el-table-column label="状态" width="110">
           <template #default="{ row }">
-            <el-tag size="small" :type="getStatusTagType(row.status)">{{ getStatusText(row.status) }}</el-tag>
+            <el-tag size="small" :type="getStatusTagType(row.status)" effect="plain" class="status-tag">{{ getStatusText(row.status) }}</el-tag>
           </template>
         </el-table-column>
       </el-table>
@@ -199,7 +208,7 @@ const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '�
 const currentMonthText = computed(() => {
   const y = currentDate.value.getFullYear()
   const m = currentDate.value.getMonth() + 1
-  return `${y}年${m}月`
+  return `${y} / ${String(m).padStart(2, '0')}`
 })
 
 // 月视图日期数组
@@ -302,7 +311,6 @@ function formatDateStr(d: Date) {
   return formatDateKey(d)
 }
 
-// 格式化时间
 // 状态相关
 function getEventStatusClass(status: string) {
   const map: Record<string, string> = {
@@ -362,7 +370,6 @@ async function loadReservations() {
     const res = await getCalendarEvents(params)
     const items = res.data || []
 
-    // 添加实验室名称
     allReservations.value = items.map((item: any) => ({
       ...item,
       id: item.id ?? item.reservationId,
@@ -370,20 +377,17 @@ async function loadReservations() {
       userName: item.requesterName || item.userName || item.user?.name || '未知'
     }))
 
-    // 如果没有数据，添加示例数据便于展示
     if (allReservations.value.length === 0) {
       addDemoData()
     }
   } catch (e) {
     console.error('加载预约失败', e)
-    // 加载失败时使用示例数据
     addDemoData()
   } finally {
     loading.value = false
   }
 }
 
-// 添加示例数据
 function addDemoData() {
   const today = new Date()
   const labNames = labs.value.length > 0
@@ -396,7 +400,6 @@ function addDemoData() {
     d.setDate(d.getDate() + i)
     const dateStr = formatDateStr(d)
 
-    // 每天随机1-3个预约
     const count = Math.floor(Math.random() * 3) + 1
     for (let j = 0; j < count; j++) {
       const hour = 8 + Math.floor(Math.random() * 8)
@@ -469,7 +472,7 @@ function showDayEvents(day: any) {
 function goToReserve() {
   detailVisible.value = false
   router.push({
-    path: '/my-reservations',
+    path: '/reservations',
     query: { labId: currentEvent.value.labId }
   })
 }
@@ -499,7 +502,6 @@ function getViewRange() {
   return { from: start.toISOString(), to: end.toISOString() }
 }
 
-// 初始化
 onMounted(async () => {
   await loadLabs()
   await loadReservations()
@@ -514,25 +516,86 @@ watch([currentDate, viewMode], () => {
 .lab-calendar-container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+  animation: fade-in 0.5s ease-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .filter-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 20px;
+  padding: 16px 24px;
+  background: #fff;
 
   .filter-center {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 32px;
+
+    .nav-group {
+      display: flex;
+      border: 1px solid var(--accent-border);
+      
+      .nav-btn {
+        border: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        height: 36px;
+        background: #fff;
+        color: var(--text-main);
+        
+        &:hover { background: var(--bg-color); color: var(--primary-color); }
+        
+        &.today-btn {
+          border-left: 1px solid var(--accent-border) !important;
+          border-right: 1px solid var(--accent-border) !important;
+          font-family: 'JetBrains Mono', monospace;
+          font-weight: 800;
+          font-size: 12px;
+        }
+      }
+    }
 
     .current-month {
-      font-size: 18px;
-      font-weight: 600;
-      color: #303133;
-      min-width: 120px;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-main);
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: -1px;
+    }
+  }
+
+  .filter-right {
+    .mode-switcher {
+      display: flex;
+      border: 1px solid var(--accent-border);
+      padding: 2px;
+      
+      .mode-item {
+        padding: 6px 16px;
+        font-size: 12px;
+        font-weight: 800;
+        font-family: 'JetBrains Mono', monospace;
+        color: var(--text-light);
+        cursor: pointer;
+        transition: all 0.2s;
+        
+        &.active {
+          background: var(--primary-color);
+          color: var(--text-main);
+          box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        }
+        
+        &:hover:not(.active) {
+          color: var(--text-main);
+          background: var(--bg-color);
+        }
+      }
     }
   }
 }
@@ -540,234 +603,170 @@ watch([currentDate, viewMode], () => {
 .legend-bar {
   display: flex;
   gap: 24px;
-  padding: 10px 20px;
-  font-size: 13px;
+  padding: 12px 24px;
+  font-size: 12px;
 
   .legend-item {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
+    color: var(--text-main);
+    font-weight: 700;
+    text-transform: uppercase;
 
     .dot {
       width: 12px;
       height: 12px;
-      border-radius: 3px;
+      border: 1px solid var(--accent-border);
 
-      &.approved { background: #67c23a; }
-      &.pending { background: #e6a23c; }
-      &.in-use { background: #409eff; }
+      &.approved { background: var(--success-color); }
+      &.pending { background: var(--warning-color); }
+      &.in-use { background: var(--primary-color); }
     }
   }
 }
 
 .calendar-body {
-  min-height: 600px;
+  padding: 0;
+  overflow: hidden;
 }
 
 .weekday-row {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  background: #f5f7fa;
-  border-bottom: 1px solid #ebeef5;
+  background: var(--bg-color);
+  border-bottom: 1px solid var(--accent-border);
 
   .weekday-cell {
     padding: 12px;
     text-align: center;
-    font-weight: 600;
-    color: #606266;
+    font-weight: 800;
+    color: var(--text-light);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
   }
 }
 
-// 月视图
 .month-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
+  background: #fff;
 
   .day-cell {
-    min-height: 110px;
-    border-right: 1px solid #ebeef5;
-    border-bottom: 1px solid #ebeef5;
-    padding: 6px;
+    min-height: 120px;
+    border-right: 1px solid rgba(140, 107, 93, 0.1);
+    border-bottom: 1px solid rgba(140, 107, 93, 0.1);
+    padding: 10px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s;
 
-    &:nth-child(7n) {
-      border-right: none;
-    }
-
-    &:hover {
-      background: #f5f7fa;
-    }
+    &:hover { background: var(--bg-color); }
 
     &.other-month {
       background: #fafafa;
-      .day-num { color: #c0c4cc; }
+      .day-num { color: #ccc; }
     }
 
     &.is-today {
-      background: rgba(64, 158, 255, 0.05);
+      background: rgba(255, 192, 133, 0.05);
+      .day-num { border-bottom: 3px solid var(--primary-color); }
     }
 
     .day-header {
-      margin-bottom: 4px;
-
+      margin-bottom: 8px;
       .day-num {
-        font-weight: 600;
-        color: #303133;
+        font-weight: 800;
+        color: var(--text-main);
         font-size: 14px;
-
-        &.today-num {
-          display: inline-flex;
-          width: 24px;
-          height: 24px;
-          align-items: center;
-          justify-content: center;
-          background: #409eff;
-          color: #fff;
-          border-radius: 50%;
-        }
+        font-family: 'JetBrains Mono', monospace;
       }
     }
 
     .day-events {
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 4px;
     }
 
     .event-bar {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 12px;
-      overflow: hidden;
+      padding: 4px 6px;
+      font-size: 11px;
+      font-weight: 700;
+      border-left: 3px solid transparent;
       white-space: nowrap;
+      overflow: hidden;
       text-overflow: ellipsis;
-      cursor: pointer;
-
-      .event-time {
-        font-weight: 600;
-        flex-shrink: 0;
-      }
-
-      .event-name {
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
+      
+      .event-time { margin-right: 4px; opacity: 0.7; }
     }
 
     .more-link {
-      font-size: 12px;
-      color: #409eff;
-      padding: 2px 6px;
-      cursor: pointer;
-
-      &:hover {
-        text-decoration: underline;
-      }
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--text-light);
+      margin-top: 4px;
+      &:hover { color: var(--primary-color); }
     }
   }
 }
 
-// 周视图
 .week-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   min-height: 500px;
+  background: #fff;
 
   .week-day-cell {
-    border-right: 1px solid #ebeef5;
-    padding: 8px;
+    border-right: 1px solid rgba(140, 107, 93, 0.1);
+    padding: 16px;
 
-    &:last-child {
-      border-right: none;
-    }
-
-    &.is-today {
-      background: rgba(64, 158, 255, 0.05);
-    }
+    &.is-today { background: rgba(255, 192, 133, 0.05); }
 
     .week-day-header {
       text-align: center;
-      margin-bottom: 8px;
-
+      margin-bottom: 20px;
       .week-day-num {
-        font-size: 20px;
-        font-weight: 600;
-        color: #303133;
-
-        &.today-num {
-          display: inline-flex;
-          width: 32px;
-          height: 32px;
-          align-items: center;
-          justify-content: center;
-          background: #409eff;
-          color: #fff;
-          border-radius: 50%;
-        }
+        font-size: 28px;
+        font-weight: 800;
+        font-family: 'JetBrains Mono', monospace;
+        color: var(--text-main);
+        display: inline-block;
+        padding-bottom: 4px;
+        &.today-num { border-bottom: 4px solid var(--primary-color); }
       }
-    }
-
-    .week-day-events {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
     }
 
     .week-event-card {
-      padding: 8px;
-      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 8px;
+      border: 1px solid var(--accent-border);
+      border-left-width: 4px;
       cursor: pointer;
       transition: transform 0.2s;
-
-      &:hover {
-        transform: translateX(2px);
-      }
-
-      .event-time-range {
-        font-size: 12px;
-        font-weight: 600;
-      }
-
-      .event-title {
-        font-size: 13px;
-        font-weight: 500;
-        margin: 2px 0;
-      }
-
-      .event-lab {
-        font-size: 11px;
-        opacity: 0.8;
-      }
+      
+      &:hover { transform: scale(1.02); }
+      
+      .event-time-range { font-size: 11px; font-weight: 800; margin-bottom: 4px; opacity: 0.8; }
+      .event-title { font-size: 13px; font-weight: 800; }
+      .event-lab { font-size: 11px; margin-top: 4px; opacity: 0.6; }
     }
   }
 }
 
-// 状态颜色
-.status-approved {
-  background: rgba(103, 194, 58, 0.15);
-  border-left: 3px solid #67c23a;
-  color: #529b2e;
+/* Status Classes */
+.status-approved { background: rgba(16, 185, 129, 0.05); border-left-color: #10b981; color: #10b981; }
+.status-pending { background: rgba(245, 158, 11, 0.05); border-left-color: #f59e0b; color: #f59e0b; }
+.status-in-use { background: rgba(255, 192, 133, 0.1); border-left-color: var(--primary-color); color: var(--text-main); }
+.status-rejected { background: rgba(239, 68, 68, 0.05); border-left-color: #ef4444; color: #ef4444; }
+
+.status-tag {
+  border-radius: 0 !important;
+  font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
 }
 
-.status-pending {
-  background: rgba(230, 162, 60, 0.15);
-  border-left: 3px solid #e6a23c;
-  color: #b88230;
-}
-
-.status-in-use {
-  background: rgba(64, 158, 255, 0.15);
-  border-left: 3px solid #409eff;
-  color: #337ecc;
-}
-
-.status-rejected {
-  background: rgba(245, 108, 108, 0.1);
-  border-left: 3px solid #f56c6c;
-  color: #c45656;
+.industrial-dialog :deep(.el-dialog__header) {
+  background: var(--accent-border);
+  .el-dialog__title { color: #fff; font-weight: 800; }
 }
 </style>

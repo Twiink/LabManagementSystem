@@ -101,6 +101,12 @@ const routes: Array<RouteRecordRaw> = [
         name: 'Users',
         component: () => import('../views/admin/UserList.vue'),
         meta: { title: '用户管理', icon: 'User', roles: ['ADMIN'] }
+      },
+      {
+        path: 'audit-logs',
+        name: 'AuditLogs',
+        component: () => import('../views/admin/AuditLogs.vue'),
+        meta: { title: '系统日志', icon: 'Document', roles: ['ADMIN'] }
       }
     ]
   }

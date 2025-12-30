@@ -3,7 +3,9 @@
     <!-- Sidebar -->
     <div class="sidebar-container" :class="{ collapsed: isCollapse }">
       <div class="logo">
-        <el-icon :size="24" color="var(--primary-color)" style="margin-right: 10px"><Cpu /></el-icon>
+        <div class="logo-box">
+          <el-icon :size="20"><Cpu /></el-icon>
+        </div>
         <span v-if="!isCollapse">Lab System</span>
       </div>
       <el-menu
@@ -38,9 +40,9 @@
         <div class="right">
           <el-dropdown>
             <span class="el-dropdown-link" style="color: var(--text-main); cursor: pointer; display: flex; align-items: center;">
-              <el-avatar :size="32" style="margin-right: 8px; background-color: var(--primary-color)">{{ userStore.userInfo?.name?.[0]?.toUpperCase() || 'U' }}</el-avatar>
+              <el-avatar :size="32" style="margin-right: 8px; background-color: var(--primary-color); color: var(--text-main); font-weight: bold;">{{ userStore.userInfo?.name?.[0]?.toUpperCase() || 'U' }}</el-avatar>
               {{ userStore.userInfo?.name || 'User' }}
-              <el-tag size="small" style="margin-left: 8px" effect="plain">{{ userStore.userInfo?.role || '未知' }}</el-tag>
+              <el-tag size="small" style="margin-left: 8px; border-color: #8C6B5D; color: #4A403A;" effect="plain" type="info">{{ userStore.userInfo?.role || '未知' }}</el-tag>
               <el-icon class="el-icon--right"><arrow-down /></el-icon>
             </span>
             <template #dropdown>
@@ -103,34 +105,70 @@ const handleLogout = () => {
 </script>
 
 <style scoped lang="scss">
+/* Variables mirroring glass.scss */
+$bg-color: #f8f8f8;
+$sidebar-bg: #FFF7F0;
+$border-color: #8C6B5D;
+$text-main: #4A403A;
+$primary-color: #FFC085;
+
 .app-wrapper {
   display: flex;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
+  background-color: $bg-color;
 }
 
 .sidebar-container {
-  width: 220px;
+  width: 240px;
   height: 100%;
-  transition: width 0.3s;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
+  z-index: 1001;
+  background: $sidebar-bg;
+  border-right: 1px solid $border-color;
   
   &.collapsed {
     width: 64px;
+    
+    .logo span {
+      opacity: 0;
+      display: none;
+    }
   }
 }
 
 .logo {
-  height: 60px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-main);
-  font-weight: bold;
-  font-size: 18px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  color: $text-main;
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -0.5px;
+  border-bottom: 1px solid rgba($border-color, 0.2);
+  background: $sidebar-bg;
+  
+  .logo-box {
+    width: 32px;
+    height: 32px;
+    background: $primary-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid $border-color;
+    color: #fff;
+    margin-right: 10px;
+  }
+  
+  span {
+    white-space: nowrap;
+    color: $text-main;
+    font-family: 'JetBrains Mono', monospace;
+  }
 }
 
 .main-container {
@@ -138,46 +176,60 @@ const handleLogout = () => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
 }
 
 .header-container {
-  height: 60px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
+  padding: 0 24px;
+  z-index: 1000;
+  background: #fff;
+  border-bottom: 1px solid $border-color;
 }
 
 .left {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 24px;
 }
 
 .collapse-btn {
   font-size: 20px;
   cursor: pointer;
-  color: var(--text-main);
+  color: $text-main;
+  transition: color 0.3s;
+  
+  &:hover {
+    color: $primary-color;
+  }
 }
 
 .app-main {
   flex: 1;
-  padding: 20px;
+  padding: 24px;
   overflow-y: auto;
+  overflow-x: hidden;
+  background-color: #f8f8f8;
+  background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
+/* Transitions */
 .fade-transform-leave-active,
 .fade-transform-enter-active {
-  transition: all 0.3s;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .fade-transform-enter-from {
   opacity: 0;
-  transform: translateX(-30px);
+  transform: translateX(-10px);
 }
 
 .fade-transform-leave-to {
   opacity: 0;
-  transform: translateX(30px);
+  transform: translateX(10px);
 }
 </style>

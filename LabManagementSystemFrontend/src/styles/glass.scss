@@ -1,133 +1,271 @@
 :root {
-  --primary-color: #409eff;
-  --bg-gradient: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%); /* Lighter, pastel gradient for better dark text contrast */
-  --glass-bg: rgba(255, 255, 255, 0.65); /* High opacity for readability */
-  --glass-border: 1px solid rgba(255, 255, 255, 0.6);
-  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-  --text-main: #1f2d3d; /* Very dark blue/grey */
-  --text-regular: #475669;
-  --border-radius-base: 16px;
+  /* Industrial Safety Orange Palette - PASTEL / NEAR-WHITE VERSION */
+  --primary-color: #FFC085; /* Soft Apricot Orange */
+  --primary-dark: #FFA940;
+  --primary-light: #FFE7BA;
+  
+  /* Auxiliary Colors */
+  --accent-border: #8C6B5D; /* Deep Earth Brown - replaces black borders */
+  --text-main: #4A403A;     /* Warm Dark Grey - replaces black text */
+  --text-regular: #665C54;
+  --text-light: #9D8D85;
+
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --danger-color: #ef4444;
+  
+  /* Backgrounds */
+  --bg-color: #f8f8f8;
+  --bg-gradient: radial-gradient(#e0e0e0 1px, transparent 1px);
+  
+  /* Glass Effects */
+  --glass-bg: #ffffff; 
+  --glass-border: 1px solid var(--accent-border); 
+  --glass-shadow: 6px 6px 0px var(--accent-border); /* Brown shadow */
+  --glass-shadow-hover: 8px 8px 0px var(--accent-border);
+  
+  /* Shape */
+  --border-radius-base: 0px; /* Sharp corners */
+  --border-radius-lg: 0px;
+  --transition-base: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
-  background: var(--bg-gradient);
-  background-attachment: fixed;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-color);
+  background-size: 20px 20px;
+  background-image: var(--bg-gradient);
   color: var(--text-main);
   min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
 }
 
+/* Base Container */
 .glass-container {
   background: var(--glass-bg);
-  box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border-radius: var(--border-radius-base);
   border: var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  transition: var(--transition-base);
 }
 
 .glass-card {
   @extend .glass-container;
   padding: 24px;
   margin-bottom: 24px;
-  color: var(--text-main);
+  
+  &:hover {
+    box-shadow: var(--glass-shadow-hover);
+    transform: translate(-1px, -1px);
+  }
 }
 
-/* Element Plus Overrides */
+/* Modern Element Plus Overrides */
+
+/* Cards */
 .el-card {
   @extend .glass-container;
-  background-color: rgba(255, 255, 255, 0.8) !important;
-  border: none !important;
+  border: 1px solid var(--accent-border) !important;
   color: var(--text-main);
+  overflow: visible !important; /* Allow shadow to show */
+
+  .el-card__header {
+    border-bottom: 1px solid var(--accent-border);
+    padding: 16px 20px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-main);
+    background: rgba(255, 192, 133, 0.1); /* Very subtle orange tint */
+  }
+  
+  /* Remove default shadow */
+  box-shadow: var(--glass-shadow) !important;
 }
 
+/* Tables */
 .el-table {
   background-color: transparent !important;
+  border: 1px solid var(--accent-border);
   color: var(--text-main) !important;
-  --el-table-text-color: var(--text-main);
-  --el-table-header-text-color: var(--text-main);
+  
+  --el-table-row-hover-bg-color: rgba(255, 192, 133, 0.15) !important;
+  --el-table-header-bg-color: var(--accent-border) !important;
+  --el-table-border-color: rgba(140, 107, 93, 0.2) !important;
   
   th.el-table__cell {
-    background-color: rgba(255, 255, 255, 0.4) !important;
+    background: var(--accent-border) !important;
+    color: #fff !important; /* White text on brown header */
     font-weight: 700;
-    color: #000 !important; /* Pure black for headers */
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255,255,255,0.2) !important;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
   }
   
-  tr, .el-table__cell {
-    background-color: transparent !important;
+  td.el-table__cell {
+    border-bottom: 1px solid rgba(140, 107, 93, 0.1) !important;
+  }
+  
+  .el-table__inner-wrapper::before {
+    display: none; /* Remove bottom border line */
   }
 }
 
-.el-table__row:hover > td {
-  background-color: rgba(64, 158, 255, 0.15) !important;
+/* Buttons */
+.el-button {
+  border-radius: 0px !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid var(--accent-border) !important;
+  color: var(--text-main) !important;
+  
+  &:not(.el-button--primary):not(.el-button--danger):not(.el-button--success) {
+    &:hover {
+      color: var(--primary-color) !important;
+      border-color: var(--primary-color) !important;
+      background-color: #fff !important;
+    }
+  }
+  
+  &--primary {
+    background-color: var(--primary-color) !important;
+    border-color: var(--accent-border) !important;
+    color: var(--text-main) !important;
+    box-shadow: 2px 2px 0px var(--accent-border);
+    
+    &:hover {
+      background-color: var(--primary-dark) !important;
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0px var(--accent-border);
+    }
+    
+    &:active {
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0px var(--accent-border);
+    }
+  }
+  
+  &--danger {
+    background-color: #fff !important;
+    color: var(--danger-color) !important;
+    border-color: var(--danger-color) !important;
+    &:hover {
+      background-color: var(--danger-color) !important;
+      color: #fff !important;
+    }
+  }
 }
 
-/* Sidebar and Header - Ensure Dark Text */
+/* Tags */
+.el-tag {
+  border-radius: 0px;
+  border: 1px solid;
+  font-weight: 600;
+  
+  &--success {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: #10b981;
+    color: #10b981;
+  }
+  
+  &--warning {
+    background: rgba(245, 158, 11, 0.1);
+    border-color: #f59e0b;
+    color: #f59e0b;
+  }
+  
+  &--danger {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: #ef4444;
+    color: #ef4444;
+  }
+}
+
+/* Sidebar & Header Styles (Global Override) */
 .sidebar-container {
-  background: rgba(255, 255, 255, 0.5) !important;
-  backdrop-filter: blur(20px);
-  border-right: 1px solid rgba(255, 255, 255, 0.5);
+  background: #FFF7F0 !important;
+  border-right: 1px solid var(--accent-border) !important;
 }
 
 .header-container {
-  background: rgba(255, 255, 255, 0.5) !important;
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-  color: var(--text-main);
+  background: #fff !important;
+  border-bottom: 1px solid var(--accent-border) !important;
 }
 
-/* Menu Text Colors */
+/* Menu */
 .el-menu {
   background-color: transparent !important;
   border-right: none !important;
 }
 
-.el-menu-item, .el-sub-menu__title {
+.el-menu-item {
+  margin: 4px 8px;
+  height: 48px !important;
+  border-radius: 0px; /* Sharp corners */
   color: var(--text-main) !important;
   font-weight: 600;
-}
+  border: 1px solid transparent;
 
-.el-menu-item:hover, .el-sub-menu__title:hover {
-  background-color: rgba(64, 158, 255, 0.15) !important;
-  color: var(--primary-color) !important;
-}
+  &.is-active {
+    background: var(--primary-color) !important;
+    color: var(--text-main) !important;
+    font-weight: 800;
+    border: 1px solid var(--accent-border);
+    box-shadow: 2px 2px 0px rgba(140, 107, 93, 0.2);
+  }
 
-.el-menu-item.is-active {
-  color: #fff !important; /* Active state can be white if background is dark/primary */
-  background-color: var(--primary-color) !important;
-  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.4);
-}
-
-/* Inputs */
-.el-input__wrapper {
-  background-color: rgba(255, 255, 255, 0.8) !important;
-  box-shadow: 0 0 0 1px #dcdfe6 inset !important;
-}
-
-.el-input__inner {
-  color: var(--text-main) !important;
-  font-weight: 500;
+  &:hover {
+    background: rgba(255, 192, 133, 0.2) !important;
+    color: var(--text-main) !important;
+  }
 }
 
 /* Dialogs */
 .el-dialog {
-  border-radius: var(--border-radius-base) !important;
-  background: rgba(255, 255, 255, 0.95) !important;
+  border-radius: 0px !important;
+  border: 1px solid var(--accent-border) !important;
+  box-shadow: 12px 12px 0px var(--accent-border) !important;
+  
+  .el-dialog__header {
+    background: var(--accent-border);
+    margin-right: 0;
+    padding: 16px 24px;
+    .el-dialog__title { color: #fff; font-weight: 800; }
+    .el-dialog__headerbtn .el-dialog__close { color: #fff; }
+  }
 }
 
-.el-dialog__title {
-  color: var(--text-main) !important;
-  font-weight: bold;
+/* Inputs */
+.el-input__wrapper {
+  box-shadow: none !important;
+  border: 1px solid #ccc !important;
+  background-color: #fff !important;
+  border-radius: 0px !important;
+  
+  &:hover {
+    border-color: var(--accent-border) !important;
+  }
+  
+  &.is-focus {
+    border-color: var(--primary-color) !important;
+    border-width: 1px !important;
+    box-shadow: 0 0 0 1px var(--primary-color) !important;
+  }
 }
 
-/* Breadcrumb */
-.el-breadcrumb__inner {
-  color: var(--text-regular) !important;
-}
-.el-breadcrumb__inner.is-link {
-  color: var(--text-main) !important;
-  font-weight: 600;
+/* Pagination */
+.el-pagination {
+  .el-pager li {
+    background: transparent;
+    border: 1px solid #ddd;
+    border-radius: 0;
+    &.is-active {
+      background-color: var(--primary-color);
+      border-color: var(--accent-border);
+      color: var(--text-main);
+    }
+  }
 }
