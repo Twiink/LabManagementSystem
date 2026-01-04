@@ -203,7 +203,7 @@ const loadStats = async () => {
       resourceName: item.labId
         ? labs.value.find(l => l.id === item.labId)?.name || `实验室 ${item.labId}`
         : devices.value.find(d => d.id === item.deviceId)?.name || `设备 ${item.deviceId}`,
-      userName: item.requester?.name || item.userName || '未知用户'
+      userName: item.requesterName || item.userName || '未知用户'
     }))
 
     // 统计当前预约和待审批

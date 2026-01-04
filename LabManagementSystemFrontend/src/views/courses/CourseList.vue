@@ -80,11 +80,10 @@
           <el-table-column prop="labName" label="实验室" min-width="150" />
           <el-table-column prop="scheduleTime" label="上课时间" min-width="150" />
           <el-table-column prop="term" label="学期" min-width="120" align="center" />
-          <el-table-column label="操作" width="240" fixed="right">
+          <el-table-column label="操作" width="160" fixed="right">
             <template #default="scope">
               <el-button link type="primary" size="small" @click="handleEdit(scope.row)">编辑</el-button>
               <el-button link type="danger" size="small" @click="handleDelete(scope.row.id)">删除</el-button>
-              <el-button link type="success" size="small" @click="handleBindReservation(scope.row)">绑定预约</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -135,27 +134,6 @@
       </template>
     </el-dialog>
 
-    <!-- Bind Dialog -->
-    <el-dialog 
-      v-model="bindDialogVisible" 
-      title="课程绑定预约" 
-      width="600px"
-      class="industrial-dialog"
-      :show-close="false"
-    >
-      <el-form :model="bindForm" label-width="100px">
-        <el-form-item label="课程"><el-input :value="bindForm.courseName" disabled /></el-form-item>
-        <el-form-item label="实验室">
-          <el-select v-model="bindForm.labId" style="width: 100%">
-            <el-option v-for="lab in labs" :key="lab.id" :label="lab.name" :value="lab.id" />
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="bindDialogVisible = false">取消</el-button>
-        <el-button type="primary" :loading="submitting" @click="handleBindSubmit">批量创建预约</el-button>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
@@ -175,7 +153,6 @@ const searchQuery = ref(''); const termFilter = ref(''); const tableData = ref<a
 const labs = ref<any[]>([]); const students = ref<any[]>([])
 const dialogVisible = ref(false); const dialogType = ref<'add' | 'edit'>('add')
 const form = reactive({ id: 0, name: '', className: '', studentIds: [] as number[], teacherName: '', term: '2024-2025-2', scheduleTime: '', labId: null as number | null })
-const bindDialogVisible = ref(false); const bindForm = reactive({ courseId: 0, courseName: '', labId: null as number | null, weeks: [] as number[], timeRange: null as [Date, Date] | null })
 
 const loadLabs = async () => { try { const res = await getLabList({ page: 1, pageSize: 100 }); labs.value = res.data.items || [] } catch (e) { console.error(e) } }
 const loadStudents = async () => { try { const res = await getStudentList({ status: 'ACTIVE', page: 1, pageSize: 500 }); students.value = res.data.items || [] } catch (e) { console.error(e) } }
@@ -197,8 +174,6 @@ const handleAdd = () => { dialogType.value = 'add'; form.id = 0; form.name = '';
 const handleEdit = (row: any) => { dialogType.value = 'edit'; Object.assign(form, row); dialogVisible.value = true }
 const handleDelete = (id: number) => { ElMessageBox.confirm('确定删除该课程？', '警告', { type: 'warning' }).then(async () => { await deleteCourseApi(id); ElMessage.success('已删除'); loadData() }) }
 const handleSubmit = async () => { /* Submit logic */ }
-const handleBindReservation = (row: any) => { bindForm.courseId = row.id; bindForm.courseName = row.name; bindForm.labId = row.labId; bindDialogVisible.value = true }
-const handleBindSubmit = async () => { /* Bind logic */ }
 </script>
 
 <style scoped lang="scss">
